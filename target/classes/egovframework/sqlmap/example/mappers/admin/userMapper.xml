@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="egovframework.example.admin.users.service.impl.adminUserMapper">
+	<!-- 관리자 로그인 체크  -->
+	<select id="loginAdminCheck" parameterType="map" resultType="AdminUserVO">
+	    SELECT 
+	        u.id,
+	        u.user_id,
+	        u.user_name,
+	        u.user_pw,
+	        u.user_email,
+	        r.id AS role_id,
+	        r.role_name,
+	        u.user_status,
+	        u.create_at,
+	        u.update_at
+	    FROM user_info u
+	    JOIN user_roles ur ON u.id = ur.user_id
+	    JOIN roles r ON ur.role_id = r.id
+	    WHERE u.user_id = #{id}
+	      AND u.user_pw = #{password}
+	      AND u.user_status = 'active'
+	      AND r.role_name = 'admin'
+	</select>
+</mapper>
