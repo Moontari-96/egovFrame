@@ -36,6 +36,7 @@
             </c:if>
 
             <input type="submit" value="로그인" />
+    		<input type="button" value="회원가입" onclick="location.href='<c:url value='/admin/user/join.do'/>'" />
         </form>
     </div>
 </body>

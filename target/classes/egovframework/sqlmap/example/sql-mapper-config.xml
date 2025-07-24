@@ -6,5 +6,6 @@
 		<typeAlias alias="egovMap" type="org.egovframe.rte.psl.dataaccess.util.EgovMap"/>
 		<typeAlias alias="BoardsVO" type="egovframework.example.admin.boards.service.BoardsVO"/>
 		<typeAlias alias="AdminUserVO" type="egovframework.example.admin.users.service.AdminUserVO"/>
+		<typeAlias alias="KorAuthVO" type="egovframework.example.korea.auth.service.KorAuthVO"/>
     </typeAliases>
 </configuration>

@@ -1,4 +1,4 @@
-package egovframework.example.cmmn;
+package egovframework.example.cmmn.util;
 
 import java.security.MessageDigest;
 

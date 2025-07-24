@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import egovframework.example.admin.users.service.AdminUserService;
 import egovframework.example.admin.users.service.AdminUserVO;
-import egovframework.example.cmmn.sha256Util;
+import egovframework.example.cmmn.util.sha256Util;
 
 import java.util.HashMap;
 import java.util.Map;

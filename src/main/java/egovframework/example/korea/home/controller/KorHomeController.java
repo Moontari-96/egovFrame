@@ -8,4 +8,13 @@ public class KorHomeController {
 	public String Home() {
 	    return "/kor/home";
 	}
+	
+	@RequestMapping("/join.do") 
+	public String join() {
+		return "/kor/auth/join";
+	}
+	@RequestMapping("/login.do") 
+	public String login() {
+		return "/kor/auth/login";
+	}
 }
