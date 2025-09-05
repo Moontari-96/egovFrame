@@ -2,10 +2,16 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 
 <configuration>
+     <settings>
+        <!-- 스네이크 케이스 → 카멜케이스 자동 매핑 -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
     <typeAliases>
 		<typeAlias alias="egovMap" type="org.egovframe.rte.psl.dataaccess.util.EgovMap"/>
 		<typeAlias alias="BoardsVO" type="egovframework.example.admin.boards.service.BoardsVO"/>
+		<typeAlias alias="PostVO" type="egovframework.example.admin.boards.service.PostVO"/>
 		<typeAlias alias="AdminUserVO" type="egovframework.example.admin.users.service.AdminUserVO"/>
+		<typeAlias alias="AdminMenuVO" type="egovframework.example.admin.menu.service.AdminMenuVO"/>
 		<typeAlias alias="KorAuthVO" type="egovframework.example.korea.auth.service.KorAuthVO"/>
     </typeAliases>
 </configuration>

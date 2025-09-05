@@ -15,8 +15,8 @@ import java.util.Map;
 @Service("UserService")
 public class AdminUserServiceImpl extends EgovAbstractServiceImpl implements AdminUserService {
 
-	@Resource(name="adminUserMapper")
-	adminUserMapper userMapper;
+	@Resource(name="AdminUserMapper")
+	AdminUserMapper userMapper;
 	
 	@Override
     public AdminUserVO selectAdminUserById(String id, String password) throws Exception {

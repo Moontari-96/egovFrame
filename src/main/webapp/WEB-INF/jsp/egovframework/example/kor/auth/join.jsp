@@ -5,19 +5,122 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>회원가입</title>
+<title>관리자 회원가입</title>
 <style>
-    body { font-family: sans-serif; background: #f3f3f3; padding: 50px; }
-    .join-box { width: 500px; margin: auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    .join-box h2 { margin-bottom: 20px; }
-    .join-box label { display: block; margin-top: 10px; }
-    .join-box input[type=text], .join-box input[type=password], .join-box input[type=email] {
-        width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;
-    }
-    .join-box input[type=button] {
-        margin-top: 20px; width: 100%; padding: 10px; background: #28a745; border: none;
-        color: #fff; font-weight: bold; border-radius: 4px; cursor: pointer;
-    }
+/* 모든 요소에 박스사이징 적용 */
+* {
+    box-sizing: border-box;
+}
+
+    body {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: #eef1f5;
+    padding: 50px;
+    margin: 0;
+}
+
+.join-box {
+    width: 420px;
+    margin: auto;
+    background: #fff;
+    padding: 40px 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transition: box-shadow 0.2s ease-in-out;
+}
+.join-box:hover {
+    box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+}
+
+.join-box h2 {
+    margin-bottom: 25px;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+}
+
+.join-box label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #444;
+}
+
+.join-box input[type=text],
+.join-box input[type=password],
+.join-box input[type=email] {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.join-box input[type=text]:focus,
+.join-box input[type=password]:focus,
+.join-box input[type=email]:focus {
+    border-color: #4dabf7;
+    box-shadow: 0 0 5px rgba(77, 171, 247, 0.4);
+    outline: none;
+}
+
+.join-box input[type=button] {
+    margin-top: 22px;
+    width: 100%;
+    padding: 12px;
+    background: #4dabf7;
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+.join-box input[type=button]:hover {
+    background: #339af0;
+}
+.join-box input[type=button]:active {
+    transform: scale(0.98);
+}
+
+.postcode-box {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.postcode-box input {
+    flex: 1;
+    height: 44px; /* ✅ 높이 고정 */
+    padding: 0 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.postcode-box button {
+    height: 44px; /* ✅ input과 동일하게 */
+    padding: 0 16px; /* 가로 padding만 */
+    background: #4dabf7;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s ease;
+    margin-top: 6px;
+    
+}
+
+
+.postcode-box button:hover {
+    background: #339af0;
+}
 </style>
 
 <!-- 카카오 주소 API -->
@@ -118,11 +221,13 @@
 
             <label for="user_name">이름</label>
             <input type="text" id="user_name" name="user_name" required />
-
+			
             <label for="post_code">우편번호</label>
-            <input type="text" id="post_code" name="post_code" readonly required />
-            <input type="button" onclick="execDaumPostcode()" value="주소 검색" style="margin-top:5px;" />
-
+	        <div class="postcode-box">
+	            <input type="text" id="post_code" name="post_code" readonly required />
+	            <button type="button" onclick="execDaumPostcode()">주소 검색</button>
+	        </div>
+	        
             <label for="address">주소</label>
             <input type="text" id="address" name="address" readonly required />
 

@@ -17,4 +17,7 @@ public class AdminUserVO {
     private String user_status;
     private LocalDateTime create_at;
     private LocalDateTime update_at;
+    
+    
+    
 }

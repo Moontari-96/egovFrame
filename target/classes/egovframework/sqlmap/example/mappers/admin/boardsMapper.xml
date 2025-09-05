@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="egovframework.example.admin.boards.service.impl.boardsMapper">
-	<select id="selectAll" resultType="BoardsVO">
-		select * from boards
+	<select id="getPostsByBoardId" parameterType="string" resultType="map">
+      	select 
+			pi.*,
+			bi.board_nm
+		from 
+			post_info pi
+		join
+			board_info bi
+		on 
+			pi.board_id = #{boardId}
+		where 
+			pi.board_id = 1
+		and 
+		  	pi.status != 'deleted';
 	</select>
 </mapper>
