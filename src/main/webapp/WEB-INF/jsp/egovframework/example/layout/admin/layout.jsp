@@ -16,9 +16,9 @@
        }
 
        body {
-           font-family: 'Segoe UI', '맑은 고딕', sans-serif;
            background-color: #f0f2f5;
            color: #333;
+           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
        }
 
        /* 레이아웃 */

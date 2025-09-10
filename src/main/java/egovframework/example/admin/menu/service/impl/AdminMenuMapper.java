@@ -6,7 +6,7 @@ import org.egovframe.rte.psl.dataaccess.mapper.Mapper;
 
 import egovframework.example.admin.menu.service.AdminMenuVO;
 
-@Mapper("AdminMenuMapper")
-public interface AdminMenuMapper {
+@Mapper("adminMenuMapper")
+public interface adminMenuMapper {
 	List<AdminMenuVO> selectMenuList();
 }

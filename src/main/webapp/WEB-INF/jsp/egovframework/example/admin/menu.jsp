@@ -9,125 +9,133 @@
 <title>Insert title here</title>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <style>
-	/* 사이드바 */
-	.menu-tree {
-	    list-style: none;
-	    padding-left: 0;
+	/* 공통 */
+	.sidebar { width: 280px; font-family: system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Noto Sans KR,sans-serif; }
+	.menu-tree, .menu-tree ul { list-style: none; padding-left: 0; margin: 0; }
+	.menu-tree li { margin: 4px 0; }
+	
+	/* 노드 공통 */
+	.depth-1 > span, .depth-2 > span, .depth-3 > a {
+	  display: block; padding: 8px 10px; border-radius: 6px; text-decoration: none;
 	}
 	
-	.menu-tree li {
-	    margin: 5px 0;
-	}
+	/* 1뎁스 */
+	.depth-1 > span { font-weight: 700; cursor: pointer; }
+	.depth-1 > span:hover { background: #e9f2ff; color: #0c63e4; }
 	
-	.menu-tree li span {
-	    font-weight: bold;
-	    display: block;
-	    padding: 6px 10px;
-	    cursor: pointer;
-	    border-radius: 5px;
-	}
+	/* 2뎁스 */
+	.depth-2 > span { font-weight: 600; cursor: pointer; margin-left: 12px; }
+	.depth-2 > span:hover { background: #e9f2ff; color: #0c63e4; }
 	
-	.menu-tree li span:hover {
-	    background-color: #2e3b4e;
-	    color: #fff;
-	}
+	/* 3뎁스 (링크) */
+	.depth-3 > a { margin-left: 24px; color: #2b2b2b; }
+	.depth-3 > a:hover { background: #e9f2ff; color: #0c63e4; }
 	
-	.menu-tree li a {
-	    display: block;
-	    padding: 6px 10px;
-	    margin-left: 15px;
-	    color: #cfd8dc;
-	    text-decoration: none;
-	    border-radius: 5px;
-	    font-size: 14px;
+	/* 자식 있는 노드만 화살표 */
+	.has-sub > span::after {
+	  content: "▶"; float: right; transition: transform .2s; opacity: .6;
 	}
+	.open > span::after { transform: rotate(90deg); }
 	
-	.menu-tree li a:hover {
-	    background-color: #2e3b4e;
-	    color: #fff;
-	}
-	
-	.menu-tree li.has-sub > span::after {
-	    content: "▶";
-	    float: right;
-	    transition: transform 0.3s ease;
-	}
-	
-	.menu-tree li.open > span::after {
-	    transform: rotate(90deg);
-	}
+	/* 초기 접기 */
+	.menu-tree ul ul { display: none; }
 
 </style>
 <script>
-$(document).ready(function(){
-    console.log("document ready"); // 문서 준비 확인
+$(function(){
+  const ctx = "${pageContext.request.contextPath}";
+  const basePath = ctx + "/admin";
+  const url = ctx + "/admin/menu/menu.do";
 
-    $.getJSON("${pageContext.request.contextPath}/admin/menu/menu.do")
-    .done(function(menuList){
-        console.log("서버 응답 받음:", menuList);
-     	// JSP에서 context path 받아오기
-        let basePath = "${pageContext.request.contextPath}/admin";
+  const eq = (a,b) => String(a) === String(b);
 
-        // 메뉴를 트리 구조로 변환 (최대 3단계)
-        function buildMenu(parentId, depth = 1) {
-            console.log("buildMenu 호출, parentId:", parentId, "depth:", depth);
+  function normalizeHref(menu) {
+    if (menu.menuUrl && menu.menuUrl.trim() !== "") {
+      var u = menu.menuUrl.trim();
+      if (u.charAt(0) !== "/") u = "/" + u;
+      if (!u.endsWith(".do")) u = u + ".do";
+      return basePath + u;
+    }
+    if (menu.boardId != null) {
+      return basePath + "/board/" + menu.boardId + ".do";
+    }
+    return "#";
+  }
 
-            let html = "<ul>";
-            menuList.forEach(function(menu){
-                console.log("menu 반복:", menu);
-                if((menu.parentId === null && parentId === null) || menu.parentId === parentId){
-                    let hasChild = menuList.some(m => m.parentId === menu.menuId);
-                    console.log("hasChild 체크:", menu.menuName, hasChild);
-
-                    if(hasChild){
-                        html += "<li class='has-sub'><span>"+menu.menuName+"</span>";
-                        html += buildMenu(menu.menuId, depth + 1); // 재귀 호출
-                        html += "</li>";
-                    } else {
-                    	html += "<li><a href='"+basePath+(menu.menuUrl || "#")+".do'>"+menu.menuName+"</a></li>";
-                        /* html += "<li><a href='"+basePath+(menu.menuUrl || "#")+"'>"+menu.menuName+"</a></li>"; */
-                    }
-                }
-            });
-            html += "</ul>";
-            console.log("buildMenu 리턴 HTML:", html);
-            return html;
+  $.getJSON(url)
+   .done(function(menuList){
+      // 자식 유무 판단
+      function hasChild(pid){
+        for (var i=0;i<menuList.length;i++){
+          if (eq(menuList[i].parentId, pid)) return true;
         }
+        return false;
+      }
 
-        // 최상위 메뉴만 root로
-        let rootMenu = "";
-        menuList.forEach(function(menu){
-            if(menu.parentId == null){
-                console.log("루트 메뉴 발견:", menu.menuName);
-                rootMenu += "<li class='has-sub'><span>"+menu.menuName+"</span>";
-                rootMenu += buildMenu(menu.menuId);
-                rootMenu += "</li>";
+      function buildChildren(parentId, parentDepth){
+        var html = "<ul>";
+        for (var i=0;i<menuList.length;i++){
+          var menu = menuList[i];
+          if ((menu.parentId == null && parentId == null) || eq(menu.parentId, parentId)) {
+            var depth = menu.menuDepth ? Number(menu.menuDepth) : (parentDepth ? parentDepth + 1 : 1);
+            var child = hasChild(menu.menuId);
+
+            if (depth === 1 || depth === 2) {
+              html += '<li class="depth-' + depth + (child ? ' has-sub' : '') + '">';
+              html += '<span data-id="' + menu.menuId + '" data-depth="' + depth + '">' + menu.menuName + '</span>';
+              if (child) html += buildChildren(menu.menuId, depth);
+              html += '</li>';
+            } else {
+              var href = normalizeHref(menu);
+              html += '<li class="depth-3">';
+              html += '<a href="' + href + '" data-id="' + menu.menuId + '" data-depth="3">' + menu.menuName + '</a>';
+              html += '</li>';
             }
-        });
+          }
+        }
+        html += "</ul>";
+        return html;
+      }
 
-        console.log("최종 rootMenu HTML:", rootMenu);
-        $("#menu-tree").html(rootMenu);
+      // 루트(1뎁스) 렌더
+      var html = "<ul>";
+      for (var i=0;i<menuList.length;i++){
+        var m = menuList[i];
+        if (m.parentId == null || String(m.parentId) === "" || String(m.parentId) === "0") {
+          var depth = m.menuDepth ? Number(m.menuDepth) : 1;
+          if (depth !== 1) continue;
+          var child = hasChild(m.menuId);
+          html += '<li class="depth-1' + (child ? ' has-sub' : '') + '">';
+          html += '<span data-id="' + m.menuId + '" data-depth="1">' + m.menuName + '</span>';
+          if (child) html += buildChildren(m.menuId, 1);
+          html += '</li>';
+        }
+      }
+      html += "</ul>";
 
-        // 초기 상태: 서브메뉴 접기
-        $("#menu-tree ul ul").hide();
+      $("#menu-tree").html(html);
 
-        // 클릭 이벤트로 토글
-        $("#menu-tree").on("click", "span", function(e){
-            e.stopPropagation();
-            let subMenu = $(this).siblings("ul");
-            if(subMenu.length > 0){
-                console.log("메뉴 클릭:", $(this).text());
-                subMenu.slideToggle(300);
-                $(this).parent().toggleClass("open");
-            }
-        });
-    })
-    .fail(function(jqXHR, textStatus, errorThrown){
-        console.error("서버 요청 실패:", textStatus, errorThrown);
-    });
+      // 초기 접기
+      $("#menu-tree ul ul").hide();
+
+      // 1/2뎁스만 토글
+      $("#menu-tree").on("click", "span[data-depth='1'], span[data-depth='2']", function(e){
+        e.stopPropagation();
+        var $li = $(this).closest("li");
+        var $sub = $li.children("ul");
+        if ($sub.length) {
+          $sub.slideToggle(150);
+          $li.toggleClass("open");
+        }
+      });
+   })
+   .fail(function(xhr, status, err){
+      console.error("❌ 메뉴 호출 실패", status, err, xhr.status, xhr.responseText);
+      alert("메뉴 API 실패: " + status + " (" + xhr.status + ")");
+   });
 });
-
 </script>
+
 </head>
 <body>
 <div class="sidebar">

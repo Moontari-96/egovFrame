@@ -52,10 +52,11 @@ public class AdminUserController {
 	        AdminUserVO user = userService.selectAdminUserById(username, password);
 	        if(user != null){
 	            // 세션 저장
+	        	System.out.println(user);
 	            session.setAttribute("adminUser", user);
 
 	            // JWT 발급
-	            String token = JwtUtil.generateToken(user.getUser_id());
+	            String token = JwtUtil.generateToken(user.getUserId());
 
 	            res.put("success", true);
 	            res.put("token", token);

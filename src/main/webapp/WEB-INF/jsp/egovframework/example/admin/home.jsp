@@ -14,7 +14,7 @@
 	    <h2>
 	        <c:choose>
 	            <c:when test="${not empty sessionScope.adminUser}">
-	                환영합니다, <c:out value="${sessionScope.adminUser.user_name}" />님!
+	                환영합니다, <c:out value="${sessionScope.adminUser.userName}" />님!
 	            </c:when>
 	            <c:otherwise>
 	                로그인 정보가 없습니다.
@@ -23,7 +23,7 @@
 	    </h2>
 	    <p>
 	        <c:if test="${not empty sessionScope.adminUser}">
-	            이메일: <c:out value="${sessionScope.adminUser.user_email}" />
+	            이메일: <c:out value="${sessionScope.adminUser.userEmail}" />
 	        </c:if>
 	    </p>
 	</div>
