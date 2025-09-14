@@ -8,39 +8,6 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<style>
-	/* 공통 */
-	.sidebar { width: 280px; font-family: system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Noto Sans KR,sans-serif; }
-	.menu-tree, .menu-tree ul { list-style: none; padding-left: 0; margin: 0; }
-	.menu-tree li { margin: 4px 0; }
-	
-	/* 노드 공통 */
-	.depth-1 > span, .depth-2 > span, .depth-3 > a {
-	  display: block; padding: 8px 10px; border-radius: 6px; text-decoration: none;
-	}
-	
-	/* 1뎁스 */
-	.depth-1 > span { font-weight: 700; cursor: pointer; }
-	.depth-1 > span:hover { background: #e9f2ff; color: #0c63e4; }
-	
-	/* 2뎁스 */
-	.depth-2 > span { font-weight: 600; cursor: pointer; margin-left: 12px; }
-	.depth-2 > span:hover { background: #e9f2ff; color: #0c63e4; }
-	
-	/* 3뎁스 (링크) */
-	.depth-3 > a { margin-left: 24px; color: #2b2b2b; }
-	.depth-3 > a:hover { background: #e9f2ff; color: #0c63e4; }
-	
-	/* 자식 있는 노드만 화살표 */
-	.has-sub > span::after {
-	  content: "▶"; float: right; transition: transform .2s; opacity: .6;
-	}
-	.open > span::after { transform: rotate(90deg); }
-	
-	/* 초기 접기 */
-	.menu-tree ul ul { display: none; }
-
-</style>
 <script>
 $(function(){
   const ctx = "${pageContext.request.contextPath}";

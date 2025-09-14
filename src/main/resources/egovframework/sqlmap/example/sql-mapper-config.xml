@@ -11,6 +11,7 @@
 		<typeAlias alias="BoardsVO" type="egovframework.example.admin.boards.service.BoardsVO"/>
 		<typeAlias alias="PostVO" type="egovframework.example.admin.boards.service.PostVO"/>
 		<typeAlias alias="AdminUserVO" type="egovframework.example.admin.users.service.AdminUserVO"/>
+		<typeAlias alias="RolesVO" type="egovframework.example.admin.users.service.RolesVO"/>
 		<typeAlias alias="AdminMenuVO" type="egovframework.example.admin.menu.service.AdminMenuVO"/>
 		<typeAlias alias="KorAuthVO" type="egovframework.example.korea.auth.service.KorAuthVO"/>
     </typeAliases>

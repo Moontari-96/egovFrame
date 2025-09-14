@@ -10,4 +10,33 @@
         order by 
         	parent_id, menu_id
 	</select>
+	
+	<insert id="saveMenu" parameterType="AdminMenuVO">
+		insert
+			into menu(parent_id, board_id, menu_name, menu_url, menu_depth, sort_order, is_active)
+		values(#{parentId}, #{boardId}, #{menuName}, #{menuUrl}, #{menuDepth}, #{sortOrder}, #{isActive})
+	</insert>
+	
+	<update id="updateMenu" parameterType="AdminMenuVO">
+		update
+			menu
+		set
+			parent_id = #{parentId},
+			board_id = #{boardId},
+			menu_name = #{menuName},
+			menu_url = #{menuUrl},
+			menu_depth = #{menuDepth},
+			sort_order = #{sortOrder},
+			is_active = #{isActive}
+		where 
+			menu_id = #{menuId}
+	</update>
+	
+	<delete id="deleteMenuCascade" parameterType="long">
+		delete 
+		from
+			menu
+		where
+			menu_id = #{menuId}
+	</delete>
 </mapper>

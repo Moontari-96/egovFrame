@@ -19,4 +19,18 @@ public class AdminMenuServiceImpl extends EgovAbstractServiceImpl implements Adm
     public List<AdminMenuVO> getMenuList() {
         return menuMapper.selectMenuList();
     }
+	
+	@Override
+	public int saveMenu(AdminMenuVO dto) {
+		return menuMapper.saveMenu(dto);
+	}
+	
+	@Override
+	public int updateMenu(AdminMenuVO dto) {
+		return menuMapper.updateMenu(dto);
+	}
+	@Override
+	public int deleteMenuCascade(Long menuId) {
+		return menuMapper.deleteMenuCascade(menuId);
+	}
 }

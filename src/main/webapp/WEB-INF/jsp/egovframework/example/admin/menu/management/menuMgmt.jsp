@@ -7,74 +7,7 @@
 <head>
   <meta charset="UTF-8">
   <title>${pageTitle}</title>
-  <style>
-    :root { --bg:#fff; --line:#e5e8eb; --muted:#667085; --primary:#4dabf7; --danger:#ff6b6b; }
-    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Noto Sans KR, Arial, sans-serif; color:#1f2937; }
-    .page { padding:20px; }
-    .card { background:#fff; padding:16px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.08); }
-    .grid { display:grid; grid-template-columns: 340px 1fr; gap:16px; }
-
-    /* Left: Tree */
-    .tree { border:1px solid var(--line); border-radius:10px; overflow:hidden; }
-    .tree-header { display:flex; align-items:center; gap:8px; padding:10px 12px; border-bottom:1px solid var(--line); background:#f8fafc; }
-    .tree-body { max-height: 70vh; overflow:auto; padding:8px 10px; }
-    .node { display:flex; align-items:center; gap:6px; padding:4px 6px; border-radius:6px; cursor:pointer; }
-    .node:hover { background:#f3f6fb; }
-    .node.active { background:#e9f2ff; outline:1px solid #cfe3ff; }
-    .twist { width:16px; height:16px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:4px; font-size:12px; }
-    .twist.empty { opacity:.2; }
-    .twist.hidden { visibility: hidden; }
-    /* 보기 좋게 살짝 들여쓰기(선택) */
-	.node.d2 { padding-left: 12px; }
-	.node.d3 { padding-left: 24px; }
-    .label { flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    ul.tree-ul { list-style:none; margin:0; padding-left:16px; }
-    ul.tree-ul > li { margin:2px 0; }
-
-    .toolbar { display:flex; gap:8px; }
-	/* 버튼 리뉴얼 */
-	.btn {
-	  padding: 10px 14px;
-	  border: 1px solid #e5e8eb;
-	  border-radius: 10px;
-	  background: #fff;
-	  cursor: pointer;
-	  font-weight: 600;
-	  transition: all .15s ease;
-	  box-shadow: 0 1px 1px rgba(0,0,0,.02);
-	}
-	.btn:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,.06); }
-	.btn:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(0,0,0,.04); }
-	
-	.btn-primary {
-	  background: linear-gradient(180deg, #5bb6ff, #4dabf7);
-	  color: #fff;
-	  border-color: #4dabf7;
-	}
-	.btn-primary:hover { filter: brightness(.97); }
-	
-	.btn-danger {
-	  background: linear-gradient(180deg, #ff7d7d, #ff6b6b);
-	  color: #fff;
-	  border-color: #ff6b6b;
-	}
-
-    /* Right: Detail */
-    .panel { border:1px solid var(--line); border-radius:10px; overflow:hidden; }
-    .panel-header { padding:10px 12px; border-bottom:1px solid var(--line); background:#f8fafc; display:flex; align-items:center; justify-content:space-between; gap:8px; }
-    .panel-body { padding:14px; display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
-    .field { display:flex; flex-direction:column; gap:6px; }
-    .field label { font-size:12px; color:#475569; }
-    .field input[type="text"], .field input[type="number"] { padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-size:14px; }
-    .switch { position:relative; width:44px; height:24px; }
-    .switch input { opacity:0; width:0; height:0; }
-    .slider { position:absolute; inset:0; background:#dbe2ea; border-radius:999px; transition:.2s; }
-    .slider:before { content:""; position:absolute; width:18px; height:18px; left:3px; top:3px; background:#fff; border-radius:50%; box-shadow:0 1px 2px rgba(0,0,0,.2); transition:.2s; }
-    .switch input:checked + .slider { background:#4dabf7; }
-    .switch input:checked + .slider:before { transform:translateX(20px); }
-
-    .muted { color: var(--muted); font-size:12px; }
-  </style>
+  <link rel="stylesheet" href="<c:url value='/css/egovframework/layout.css'/>">
 </head>
 <body>
 <div class="page">
@@ -111,7 +44,8 @@
         <div class="panel-body">
           <div class="field"><label>상위 ID (parentId)</label><input id="f_parentId" type="number" readonly></div>
           <div class="field"><label>깊이 (menuDepth)</label><input id="f_depth" type="number" readonly></div>
-          <div class="field"><label>정렬순서 (sortOrder)</label><input id="f_sort" type="number" value="0"></div>
+          <div class="field"><label>게시판 ID (boardId)</label><input id="f_board" type="number" min="0" value=""></div>
+          <div class="field"><label>정렬순서 (sortOrder)</label><input id="f_sort" type="number" value="0" min="0" step="1" inputmode="numeric" pattern="\d*"></div>
           <div class="field" style="grid-column:1/3"><label>메뉴명</label><input id="f_name" type="text"></div>
           <div class="field" style="grid-column:1/3"><label>URL</label><input id="f_url" type="text" placeholder="/path"></div>
           <div class="field"><label>사용여부</label>
@@ -122,6 +56,7 @@
     </div>
   </div>
 </div>
+
 <!-- (선택) 컨트롤러에서 내려준 JSON이 있다면 여기에 싣기 -->
 <script type="application/json" id="menu-data">
   <c:out value="${menuJson}" />
@@ -177,6 +112,7 @@ function sanitizeMenu(list) {
   return (list || []).map(m => {
     // 다양한 키 별칭 대응
     const id        = m.menuId ?? m.id ?? m.menu_id;
+    const board        = m.boardId ?? m.board_id ?? m.board;
     const pid       = m.parentId ?? m.parent_id ?? m.pid ?? m.parent;
     const name      = m.menuName ?? m.name ?? m.menu_name ?? m.title;
     const url       = m.menuUrl ?? m.url ?? m.path;
@@ -187,6 +123,7 @@ function sanitizeMenu(list) {
     return {
       menuId   : toNum(id),
       parentId : toNum(pid, 0),
+      boardId  : toNum(board, 0),
       menuName : (name ?? '').toString(),
       menuUrl  : (url  ?? '').toString(),
       menuDepth: toNum(depth, 1),
@@ -393,8 +330,9 @@ function selectNode(id){
 	  const m = MENU.find(x => x.menuId === id);
 	  if(!m) return;
 
-	  byId('f_parentId').value = m.parentId || 0;
+	  byId('f_parentId').value = m.parentId || null;
 	  byId('f_depth').value    = m.menuDepth || 1;
+	  byId('f_board').value     = m.boardId || null;
 	  byId('f_sort').value     = m.sortOrder || 0;
 	  byId('f_name').value     = m.menuName  || '';
 	  byId('f_url').value      = m.menuUrl   || '';
@@ -410,11 +348,12 @@ function addAuto(){
   const canBeChild = !!parent && (parent.menuDepth||1) < MAX_DEPTH;
 
   const node = {
-    menuId:   tempSeq--,
-    parentId: canBeChild ? parent.menuId : 0,      // 선택 없거나 최대뎁스면 루트
+    menuId: tempSeq--,
+    parentId: canBeChild ? parent.menuId : null,      // 선택 없거나 최대뎁스면 루트
+    boardId: 0,      // 선택 없거나 최대뎁스면 루트
     menuName: '새 메뉴',
     menuUrl:  '',
-    sortOrder: 9999,
+    sortOrder: '',
     menuDepth: canBeChild ? (parent.menuDepth||1)+1 : 1,
     isActive: true
   };
@@ -437,21 +376,73 @@ function clearDetail(){
 	  byId('detailTitle').textContent='상세';
 	  byId('detailPath').textContent='';
 }
-function removeSelected(){
-  if(selectedId == null){ alert('삭제할 메뉴를 선택하세요.'); return; }
+
+async function removeSelected() {
+  if (selectedId == null) { alert('삭제할 메뉴를 선택하세요.'); return; }
+
+  const target = MENU.find(m => m.menuId === selectedId);
+  if (!target) { alert('대상 메뉴를 찾을 수 없습니다.'); return; }
+
+  // self + children
   const ids = collectWithChildren(selectedId);
-  if(!confirm(`하위 포함 ${ids.length}개 항목을 삭제하시겠습니까?`)) return;
+  const childCount = Math.max(0, ids.length - 1);
+  const menuName = ((target.menuName || '').trim() || '(무제)');
 
-  for(const id of ids){ const idx = MENU.findIndex(m=>m.menuId===id); if(idx>=0) MENU.splice(idx,1); }
-  selectedId = null; renderTree(); clearDetail();
+  const msg = childCount > 0
+    ? "'" + menuName + "'을(를) 삭제하면 하위 " + childCount + "개 항목도 함께 삭제됩니다. 계속할까요?"
+    : "'" + menuName + "'을(를) 삭제할까요?";
+  if (!confirm(msg)) return;
 
-  const form = new URLSearchParams();
-  form.append('ids', JSON.stringify(ids));
-  if(csrfParam) form.append(csrfParam, csrfToken);
-  fetch('<c:url value="/admin/menu/delete.do"/>', {
-    method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: form
-  }).then(r=>r.json()).then(j=>{ if(!j.success) alert(j.message||'삭제 실패'); })
-    .catch(()=> alert('삭제 중 오류'));
+  // 다음 선택 대상 계산: 다음 형제 -> 이전 형제 -> 부모
+  const pid = target.parentId || 0;
+  const sibs = MENU
+    .filter(n => (n.parentId || 0) === pid)
+    .sort((a,b) => (a.sortOrder||0)-(b.sortOrder||0) || a.menuId-b.menuId);
+  const idx = sibs.findIndex(n => n.menuId === target.menuId);
+  const nextSel = (sibs[idx+1] && sibs[idx+1].menuId)
+               || (sibs[idx-1] && sibs[idx-1].menuId)
+               || (pid || null);
+
+  // ---- 낙관적 UI 업데이트 ----
+  const prevMENU = JSON.parse(JSON.stringify(MENU));
+  MENU = MENU.filter(m => !ids.includes(m.menuId));
+  reindexSortOrder(pid);
+  selectedId = nextSel || null;
+  renderTree();
+  if (selectedId) selectNode(selectedId); else clearDetail();
+
+  // ---- 서버 호출 ----
+  try {
+	  if (target.menuId > 0) {
+	    let url = "<c:url value='/admin/menu/deleteMenu.do'/>";
+	    const qs = new URLSearchParams({ menuId: String(target.menuId) });
+	    if (csrfParam && csrfToken) qs.append(csrfParam, csrfToken);
+	    url += "?" + qs.toString();
+	
+	    const res = await fetch(url, {
+	      method: 'POST',                // @PostMapping과 일치
+	      headers: { 'Accept': '*/*' },  // 어떤 응답이든 받기
+	      credentials: 'same-origin'
+	    });
+	
+	    // ✅ 2xx면 성공으로 간주 (본문 검사 X)
+	    if (!(res.status >= 200 && res.status < 300)) {
+	      const text = await res.text().catch(()=> '');
+	      throw new Error('HTTP ' + res.status + (text ? ' ' + text : ''));
+	    }
+	  }
+	
+	  snapshot(); // 커밋
+	  alert('삭제되었습니다.');
+	
+	} catch (err) {
+	  console.error(err);
+	  // 롤백
+	  MENU = prevMENU;
+	  renderTree();
+	  selectNode(target.menuId);
+	  alert('삭제 중 오류가 발생했습니다. ' + (err?.message || ''));
+	}
 }
 
 function saveCurrent(){
@@ -461,11 +452,13 @@ function saveCurrent(){
   m.menuUrl  = byId('f_url').value.trim();
   m.sortOrder = Number(byId('f_sort').value||0);
   m.isActive = byId('f_active').checked;
+  const boardRaw = byId('f_board').value?.trim();
+  m.boardId = boardRaw === '' ? null : Number(boardRaw);
 
   const row = JSON.parse(JSON.stringify(m));
   if(row.menuId < 0) row.clientTempId = row.menuId;
 
-  let url = '<c:url value="/admin/menu/batch-save.do"/>';
+  let url = '<c:url value="/admin/menu/saveMenu.do"/>';
   if(csrfParam){ const qs = new URLSearchParams(); qs.append(csrfParam, csrfToken); url += '?' + qs.toString(); }
 
   fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ rows:[row] }) })
@@ -501,22 +494,23 @@ function getRootId(id){
 }
 
 function setAllCollapsed(flag){
-  MENU.forEach(m => {
-    const d = m.menuDepth || 1;
-    if (d <= 2) collapsedState.set(m.menuId, !!flag); // 1·2뎁스만 대상
-  });
-  renderTree();
-}
+	  MENU.forEach(m => {
+	    const d = m.menuDepth || 1;
+	    if (d <= 2) m._collapsed = !!flag;  // 렌더가 보는 건 _collapsed
+	  });
+	  renderTree();
+	}
 
-//depth=1 -> 루트 접기(2·3 안 보임)
-//depth=2 -> 1뎁스는 펼치고 2뎁스부터 접기(=3만 숨김)
+//depth=1 → 루트(1뎁스)만 접음 → 2·3 안 보임
+//depth=2 → 1뎁스 펴고 2뎁스 접음 → 3은 자연히 숨겨짐
 function collapseAtDepth(depth){
-MENU.forEach(n => {
- const d = n.menuDepth || 1;
- if (d < depth) collapsedState.set(n.menuId, false);      // 상위는 펼침
- else if (d === depth) collapsedState.set(n.menuId, true); // 해당 뎁스 접기
-});
-renderTree();
+	MENU.forEach(n => {
+	 const d = n.menuDepth || 1;
+	 if (d < depth)       n._collapsed = false; // 상위는 펼침
+	 else if (d === depth) n._collapsed = true;  // 해당 뎁스 접기
+	 // d > depth 는 부모 접힘에 종속이라 굳이 안 건드려도 됨
+	});
+	renderTree();
 }
 // ============================== 초기화 ==============================
 document.addEventListener('DOMContentLoaded', async () => {
@@ -525,8 +519,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnDel  = byId('btnDelete'); if (btnDel)  btnDel.onclick  = removeSelected;
   const btnSave = byId('btnSave');   if (btnSave) btnSave.onclick = saveCurrent;
   const btnReset= byId('btnReset');  if (btnReset)btnReset.onclick= resetCurrent;
-  const btnColAll = byId('btnCollapseAll'); if (btnColAll) btnColAll.onclick = ()=> setAllCollapsed(true);
-  const btnExpAll = byId('btnExpandAll');  if (btnExpAll) btnExpAll.onclick  = ()=> setAllCollapsed(false);
+  const btnColAll = byId('btnCollapseAll'); if (btnColAll) btnCollapseAll.onclick = () => setAllCollapsed(true);
+  const btnExpAll = byId('btnExpandAll');  if (btnExpAll) btnExpandAll.onclick   = () => setAllCollapsed(false);
   
   MENU = await loadMenu();
   console.log('RAW MENU:', MENU); // ← 여기에 실제 키 확인 가능

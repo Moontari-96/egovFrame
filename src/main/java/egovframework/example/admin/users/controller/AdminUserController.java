@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import egovframework.example.admin.users.service.AdminUserService;
 import egovframework.example.admin.users.service.AdminUserVO;
+import egovframework.example.admin.users.service.RolesVO;
 import egovframework.example.cmmn.util.JwtUtil;
 
 @Controller
@@ -81,8 +82,101 @@ public class AdminUserController {
 	public String Join(HttpSession session) {
 		return "/admin/auth/join";
 	};
-	@RequestMapping("/board.do")
-	public String Board(HttpSession session) {
-		return "/admin/board/boardList";
+	
+//	@RequestMapping("/board.do")
+//	public String Board(HttpSession session) {
+//		return "/admin/board/boardList";
+//	};
+	
+	// 관리자 목록조회
+	@RequestMapping("/adminList.do")
+	public String adminList(HttpSession session, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
+		try {
+			int totalCount = userService.countByAdmin();
+			int offset = (page - 1) * size;
+			List<Map<String, Object>> adminList = userService.findByAdmin(size, offset);
+			// 게시판 이름 (글이 0개일 때도 대비)
+			String pageTitle = "관리자 관리";
+			// 페이징 계산(5개짜리 블록)
+			int totalPages = (int) Math.ceil((double) totalCount / size);
+			if (totalPages < 1) totalPages = 1;
+			
+			int blockSize = 5;
+			int currentBlock = (page - 1) / blockSize;
+			int startPage = currentBlock * blockSize + 1;
+			int endPage = Math.min(startPage + blockSize - 1, totalPages);
+			int rowNoStart = totalCount - (page - 1) * size;
+			System.out.println(adminList+ "게시물 리스트 확인");
+			// 모델 바인딩
+			model.addAttribute("adminList", adminList);
+			model.addAttribute("pageTitle", pageTitle);
+			model.addAttribute("page", page);
+			model.addAttribute("size", size);
+			model.addAttribute("totalCount", totalCount);
+			model.addAttribute("totalPages", totalPages);
+			model.addAttribute("blockSize", blockSize);
+			model.addAttribute("startPage", startPage);
+			model.addAttribute("endPage", endPage);
+			model.addAttribute("rowNoStart", rowNoStart);
+			model.addAttribute("contentPage", "/WEB-INF/jsp/egovframework/example/admin/user/admin/adminList.jsp");
+			return "/layout/admin/layout";
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return "/layout/admin/layout";
+		}
+
 	};
+	
+	// 관리자 상세 view
+	@RequestMapping("/detail.do")
+	public String adminDetailView(@RequestParam("id") Long id, Model model) {
+		try {
+			String pageTitle = "관리자 상세";
+			Map<String, Object> admin = userService.findOneAdmin(id);
+			List<RolesVO> roles = userService.findRole();
+			model.addAttribute("admin", admin);
+			model.addAttribute("roles", roles);
+			model.addAttribute("pageTitle", pageTitle);
+			model.addAttribute("contentPage", "/WEB-INF/jsp/egovframework/example/admin/user/admin/adminDetail.jsp");
+			return "/layout/admin/layout";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "/layout/admin/layout";
+			// TODO: handle exception
+		}
+		
+	}
+	
+	// 관리자 등록 view
+	@RequestMapping("/adminCreateView.do")
+	public String adminCreateView(Model model) {
+		try {
+			String pageTitle = "관리자 상세";
+			List<RolesVO> roles = userService.findRole();
+			model.addAttribute("roles", roles);
+			model.addAttribute("pageTitle", pageTitle);
+			model.addAttribute("contentPage", "/WEB-INF/jsp/egovframework/example/admin/user/admin/adminDetail.jsp");
+			return "/layout/admin/layout";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "/layout/admin/layout";
+			// TODO: handle exception
+		}
+		
+	}
+	
+	// 관리자 등록
+	@RequestMapping("/adminCreate.do")
+	public String adminCreate(AdminUserVO dto, Long id) {
+		try {
+			String pageTitle = "관리자 상세";
+			List<RolesVO> roles = userService.findRole();
+			return "";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+		
+	}
 }

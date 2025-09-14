@@ -7,7 +7,6 @@
 	        u.id,
 	        u.user_id,
 	        u.user_name,
-	        u.user_pw,
 	        u.user_email,
 	        r.id AS role_id,
 	        r.role_name,
@@ -20,6 +19,65 @@
 	    WHERE u.user_id = #{id}
 	      AND u.user_pw = #{password}
 	      AND u.user_status = 'active'
-	      AND r.role_name = 'admin'
+	</select>
+	
+	<select id="countByAdmin" resultType="int">
+	    select 
+	        count(*)
+	    from user_info u
+	    join user_roles ur on u.id = ur.user_id
+	    join roles r on ur.role_id = r.id
+	</select>
+	
+	<select id="findByAdmin" resultType="map">
+	    select 
+	        u.id,
+	        u.user_id,
+	        u.user_name,
+	        u.user_email,
+	        r.id AS role_id,
+	        r.role_name,
+	        u.user_status,
+	        u.create_at,
+	        u.update_at
+	    from
+	    	user_info u
+	    join 
+	    	user_roles ur on u.id = ur.user_id
+	    join 
+	    	roles r on ur.role_id = r.id
+	    limit 
+        	#{size} 
+        offset
+        	#{offset}
+	</select>
+	
+	<select id="findOneAdmin" resultType="map">
+	    select 
+	        u.id,
+	        u.user_id,
+	        u.user_name,
+	        u.user_email,
+	        r.id AS role_id,
+	        r.role_name,
+	        u.user_status,
+	        u.create_at,
+	        u.update_at
+	    from
+	    	user_info u
+	    join 
+	    	user_roles ur on u.id = ur.user_id
+	    join 
+	    	roles r on ur.role_id = r.id
+	    where
+	    	u.id = #{id}
+	</select>
+	
+	<select id="findRole" resultType="RolesVO">
+	    select 
+	        id,
+	        role_name
+	    from
+	    	roles
 	</select>
 </mapper>

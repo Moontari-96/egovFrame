@@ -6,66 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <title><c:out value="${pageTitle != null ? pageTitle : '관리자 대시보드'}" /></title>
-    <link rel="stylesheet" href="<c:url value='/css/layout.css'/>">
-    <style>
-       /* 기본 리셋 */
-       * {
-           box-sizing: border-box;
-           margin: 0;
-           padding: 0;
-       }
-
-       body {
-           background-color: #f0f2f5;
-           color: #333;
-           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-       }
-
-       /* 레이아웃 */
-       .container {
-           display: flex;
-           min-height: 100vh;
-       }
-
-       /* 콘텐츠 */
-       .content {
-           flex: 1;
-           padding: 30px;
-           background-color: #f0f2f5;
-       }
-
-       /* 카드 */
-       .card {
-           background-color: #fff;
-           padding: 25px;
-           border-radius: 12px;
-           box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-           margin-bottom: 20px;
-       }
-
-       /* 헤더 */
-       .header {
-           width: 100%;
-           background-color: #1f2a38;
-           color: #fff;
-           padding: 20px 30px;
-           font-size: 20px;
-           font-weight: bold;
-           display: flex;
-           justify-content: space-between;
-           align-items: center;
-       }
-
-       .logout a {
-           color: #cfd8dc;
-           text-decoration: none;
-           font-size: 14px;
-       }
-
-       .logout a:hover {
-           color: #fff;
-       }
-    </style>
+    <link rel="stylesheet" href="<c:url value='/css/egovframework/layout.css'/>">
 </head>
 <body>
 

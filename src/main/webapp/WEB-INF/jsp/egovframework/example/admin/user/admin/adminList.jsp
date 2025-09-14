@@ -12,11 +12,6 @@
 </head>
 <body>
 
-<%-- 모델(boardId) 우선, 없으면 param, 리스트 순으로 해석 --%>
-<c:set var="boardIdResolved"
-       value="${not empty boardId ? boardId
-                : (not empty param.boardId ? param.boardId
-                   : (empty postList ? '' : postList[0].board_id))}" />
 
 <div class="card">
     <h2>${pageTitle}</h2>
@@ -25,34 +20,42 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>제목</th>
-                <th>작성자</th>
-                <th>등록일</th>
-                <th>조회수</th>
+                <th>관리자ID</th>
+                <th>이름</th>
+                <th>상태</th>
+                <th>가입일</th>
             </tr>
         </thead>
         <tbody>
             <c:choose>
-                <c:when test="${not empty postList}">
-                    <c:forEach var="post" items="${postList}" varStatus="s">
+                <c:when test="${not empty adminList}">
+                    <c:forEach var="admin" items="${adminList}" varStatus="s">
                         <tr>
                             <td>${rowNoStart - s.index}</td>
                             <td style="text-align:left;">
-                                <a href="<c:url value='/admin/board/view.do'>
-                                            <c:param name='postId' value='${post.post_id}'/>
+                                <a href="<c:url value='/admin/user/detail.do'>
+                                            <c:param name='id' value='${admin.id}'/>
                                          </c:url>">
-                                    ${post.title}
+                                    ${admin.user_id}
                                 </a>
                             </td>
-                            <td>${post.created_by_id}</td>
-                            <td class="date-cell" data-date="${post.created_at}"></td>
-                            <td>${post.views}</td>
+                            <td>${admin.user_name}</td>
+                            <td>
+                            	<c:set var="status" value="${admin.user_status}" />
+									<c:choose>
+									  <c:when test="${status == 'active'}">활성</c:when>
+									  <c:when test="${status == 'dormant'}">휴면</c:when>
+									  <c:when test="${status == 'black'}">블랙</c:when>
+									  <c:otherwise>미정</c:otherwise>
+									</c:choose>
+                            </td>
+                            <td class="date-cell" data-date="${admin.create_at}"></td>
                         </tr>
                     </c:forEach>
                 </c:when>
                 <c:otherwise>
                     <tr>
-                        <td colspan="5">등록된 게시글이 없습니다.</td>
+                        <td colspan="5">등록된 관리자가 없습니다.</td>
                     </tr>
                 </c:otherwise>
             </c:choose>
@@ -61,10 +64,9 @@
 
     <%-- 페이징 네비게이션 --%>
     <div class="pagination">
-        <%-- 맨앞 --%>
         <c:choose>
             <c:when test="${page > 1}">
-                <a href="<c:url value='/admin/board/${boardIdResolved}.do'>
+                <a href="<c:url value='/admin/user/adminList.do'>
                            <c:param name='page' value='1'/>
                            <c:param name='size' value='${size}'/>
                          </c:url>">« </a>
@@ -72,11 +74,10 @@
             <c:otherwise><span class="disabled">« </span></c:otherwise>
         </c:choose>
 
-        <%-- 이전 블록 --%>
         <c:set var="prevBlockPage" value="${startPage - 1}" />
         <c:choose>
             <c:when test="${prevBlockPage >= 1}">
-                <a href="<c:url value='/admin/board/${boardIdResolved}.do'>
+                <a href="<c:url value='/admin/user/adminList.do'>
                            <c:param name='page' value='${prevBlockPage}'/>
                            <c:param name='size' value='${size}'/>
                          </c:url>">‹ </a>
@@ -84,14 +85,13 @@
             <c:otherwise><span class="disabled">‹ </span></c:otherwise>
         </c:choose>
 
-        <%-- 페이지 번호 (startPage ~ endPage) --%>
         <c:forEach var="p" begin="${startPage}" end="${endPage}">
             <c:choose>
                 <c:when test="${p == page}">
                     <span class="active">${p}</span>
                 </c:when>
                 <c:otherwise>
-                    <a href="<c:url value='/admin/board/${boardIdResolved}.do'>
+                    <a href="<c:url value='/admin/user/adminList.do'>
                                <c:param name='page' value='${p}'/>
                                <c:param name='size' value='${size}'/>
                              </c:url>">${p}</a>
@@ -99,11 +99,10 @@
             </c:choose>
         </c:forEach>
 
-        <%-- 다음 블록 --%>
         <c:set var="nextBlockPage" value="${endPage + 1}" />
         <c:choose>
             <c:when test="${nextBlockPage <= totalPages}">
-                <a href="<c:url value='/admin/board/${boardIdResolved}.do'>
+                <a href="<c:url value='/admin/user/adminList.do'>
                            <c:param name='page' value='${nextBlockPage}'/>
                            <c:param name='size' value='${size}'/>
                          </c:url>"> ›</a>
@@ -111,10 +110,9 @@
             <c:otherwise><span class="disabled"> ›</span></c:otherwise>
         </c:choose>
 
-        <%-- 맨끝 --%>
         <c:choose>
             <c:when test="${page < totalPages}">
-                <a href="<c:url value='/admin/board/${boardIdResolved}.do'>
+                <a href="<c:url value='/admin/user/adminList.do'>
                            <c:param name='page' value='${totalPages}'/>
                            <c:param name='size' value='${size}'/>
                          </c:url>"> »</a>
@@ -124,9 +122,9 @@
     </div>
 
     <div class="board-actions">
-        <a href="<c:url value='/admin/board/write.do'>
-                   <c:param name='boardId' value='${boardIdResolved}'/>
-                 </c:url>">글쓰기</a>
+        <a href="<c:url value='/admin/user/adminCreateView.do'>
+                   <%-- <c:param name='boardId' value='${boardIdResolved}'/> --%>
+              	</c:url>">관리자 등록</a>
     </div>
 </div>
 

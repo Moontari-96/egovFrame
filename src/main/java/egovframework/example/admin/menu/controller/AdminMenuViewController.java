@@ -39,12 +39,13 @@ public class AdminMenuViewController {
 //    }
     public String mgmtView(Model model) throws Exception {
         List<AdminMenuVO> list = menuService.getMenuList();
-
+        System.out.println(list);
         // 화면용으로 기본값 보정(숫자/불리언 null 방지)
         List<Map<String,Object>> simple = list.stream().map(m -> {
             Map<String,Object> o = new HashMap<>();
             o.put("menuId", m.getMenuId());
             o.put("parentId", m.getParentId() == null ? 0 : m.getParentId());
+            o.put("boardId", m.getBoardId() == null ? 0 : m.getBoardId());
             o.put("menuName", m.getMenuName());
             o.put("menuUrl", m.getMenuUrl());
             o.put("menuDepth", m.getMenuDepth() == null ? 1 : m.getMenuDepth());
