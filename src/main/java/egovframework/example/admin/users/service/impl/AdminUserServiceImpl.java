@@ -55,4 +55,32 @@ public class AdminUserServiceImpl extends EgovAbstractServiceImpl implements Adm
 	public List<RolesVO> findRole() throws Exception {
 		return userMapper.findRole(); 
 	}
+	
+	// 관리자 아이디 중복체크 	
+	@Override
+	public int checkId(String userId) throws Exception {
+		return userMapper.checkId(userId); 
+	}
+	
+	// 관리자 계정 생성	
+	@Override
+	public Long adminCreate(AdminUserVO dto) throws Exception {
+		// 비밀번호 SHA-256 암호화
+		String password = dto.getUserPw();
+        String encryptedPassword = sha256Util.encrypt(password);
+        dto.setUserPw(encryptedPassword);
+		return userMapper.adminCreate(dto); 
+	}
+	
+	// 관리자 권한 매핑 	
+	@Override
+	public int insertAdminRoleMap(Long userId, Long roleId) throws Exception {
+		return userMapper.insertAdminRoleMap(userId, roleId); 
+	}
+	
+	// 관리자 계정 삭제
+	@Override
+	public int deleteAdmin(Long userId) throws Exception {
+		return userMapper.deleteAdmin(userId); 
+	}
 }

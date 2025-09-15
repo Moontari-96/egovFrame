@@ -25,4 +25,16 @@ public interface AdminUserMapper {
 	
 	// 권한목록
 	List<RolesVO> findRole();
+	
+	// 관리자 아이디 중복체크
+	int checkId(String userId);
+	
+	// 관리자 계정 생성
+	Long adminCreate(AdminUserVO dto);
+	
+	// 관리자 권한 매핑
+	int insertAdminRoleMap(@Param("userId") Long userId, @Param("roleId") Long roleId) throws Exception;
+	
+	// 관리자 계정 삭제
+	int deleteAdmin(Long id) throws Exception;
 }

@@ -10,6 +10,7 @@ public class AdminUserVO {
 	  private Long id;
 	  private String userId;
 	  private String userName;
+	  private String userPw;
 	  private String userEmail;
 	  private Long roleId;
 	  private String roleName;

@@ -8,7 +8,7 @@
 	        u.user_id,
 	        u.user_name,
 	        u.user_email,
-	        r.id AS role_id,
+	        r.id AS roleId,
 	        r.role_name,
 	        u.user_status,
 	        u.create_at,
@@ -80,4 +80,31 @@
 	    from
 	    	roles
 	</select>
+	
+	<select id="checkId" resultType="int">
+	    select 
+	    	count(*) 
+	    from 
+	    	user_info 
+	    where 
+	    	user_id = #{userId};
+	</select>
+	
+	<insert id="adminCreate" parameterType="AdminUserVO" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		insert into user_info(user_id, user_email, user_pw, user_name, user_status)
+		values(#{userId},#{userEmail},#{userPw},#{userName},#{userStatus})
+	</insert>
+	
+	<insert id="insertAdminRoleMap" parameterType="map">
+	  insert into user_roles (user_id, role_id)
+	  values (#{userId}, #{roleId})
+	  on duplicate key update role_id = values(role_id)
+	</insert>
+	
+	<delete id="deleteAdmin">
+	 	delete 
+	 		from user_info
+	 	where
+	 		id = #{id}
+	</delete>
 </mapper>

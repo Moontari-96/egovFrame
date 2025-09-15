@@ -7,9 +7,11 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,6 +20,7 @@ import egovframework.example.admin.users.service.AdminUserService;
 import egovframework.example.admin.users.service.AdminUserVO;
 import egovframework.example.admin.users.service.RolesVO;
 import egovframework.example.cmmn.util.JwtUtil;
+import egovframework.example.cmmn.util.sha256Util;
 
 @Controller
 @RequestMapping("/admin/user")
@@ -50,7 +53,9 @@ public class AdminUserController {
 	                                 HttpSession session) {
 	    Map<String, Object> res = new HashMap<>();
 	    try {
-	        AdminUserVO user = userService.selectAdminUserById(username, password);
+ 
+	    	AdminUserVO user = userService.selectAdminUserById(username, password);
+	        
 	        if(user != null){
 	            // 세션 저장
 	        	System.out.println(user);
@@ -167,16 +172,84 @@ public class AdminUserController {
 	}
 	
 	// 관리자 등록
-	@RequestMapping("/adminCreate.do")
-	public String adminCreate(AdminUserVO dto, Long id) {
+	@PostMapping(value = "/adminCreate.do",
+            consumes = "application/json",
+            produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public ResponseEntity<Map<String,Object>> adminCreate(@RequestBody AdminUserVO dto) {
+	   try {
+//		   System.out.println(dto.getPassword()+ "들어오는값확인");
+//		   System.out.println(dto.getUserId()+ "들어오는값확인");
+//		   System.out.println(dto.getUserName()+ "들어오는값확인");
+//		   System.out.println(dto.getUserStatus()+ "들어오는값확인");
+//		   System.out.println(dto.getRoleId()+ "들어오는값확인");
+//		   System.out.println(dto.getUserEmail()+ "들어오는값확인");
+		   Long newId = userService.adminCreate(dto);  // 저장 후 PK 리턴하도록 구현
+		   Long idFromDto = dto.getId();
+		   if (idFromDto != null && idFromDto > 0L) {
+			    // 성공 시 권한 매핑
+			   System.out.println(idFromDto + "들어오는값확인");
+			   userService.insertAdminRoleMap(idFromDto, dto.getRoleId());
+			   return ResponseEntity.ok(Map.of(
+			           "success", true,
+			           "message", "success"
+			       ));
+			} else {
+				return ResponseEntity.status(500).body(Map.of(
+		           "success", false,
+		           "message", "server error"
+		       ));
+			}
+	   } catch (Exception e) {
+	       e.printStackTrace();
+	       return ResponseEntity.status(500).body(Map.of(
+	           "success", false,
+	           "message", "server error"
+	       ));
+	   }
+	}
+	// 아이디 중복체크
+	@RequestMapping("/checkId.do")
+	public ResponseEntity<Map<String,Object>> checkId(@RequestParam String userId) {
 		try {
-			String pageTitle = "관리자 상세";
-			List<RolesVO> roles = userService.findRole();
-			return "";
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "";
-		}
-		
+	        boolean exists = userService.checkId(userId) > 0;
+	        Map<String, Object> body = new HashMap<>();
+	        body.put("available", !exists); // 사용 가능 여부
+	        body.put("exists", exists);     // 존재 여부
+	        return ResponseEntity.ok(body); // 200 + JSON
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        // 에러도 200으로 주고 사용 불가로 처리하게 할 수도 있고,
+	        // 500으로 명확히 내려도 프런트가 ok=false라 가용 false로 처리합니다.
+	        Map<String, Object> body = new HashMap<>();
+	        body.put("available", false);
+	        body.put("exists", false);
+	        body.put("message", "server error");
+	        return ResponseEntity.status(500).body(body);
+	    }
+	}
+	// 관리자 등록
+	@PostMapping("adminDelete.do")
+	@ResponseBody
+	public ResponseEntity<Map<String,Object>> adminDelete (@RequestParam("id") Long id, HttpSession session) {
+		System.out.println("[DELETE] userId=" + id);
+		try {
+		    // (선택) 본인 삭제 방지
+			System.out.println(id + "들어오는값확인");
+		    AdminUserVO me = (AdminUserVO) session.getAttribute("adminUser");
+		    System.out.println(me.getId() + "들어오는값확인");
+		    if (me != null && me.getId() != null && me.getId().equals(id)) {
+		      return ResponseEntity.ok(Map.of("success", false, "message", "본인 계정은 삭제할 수 없습니다."));
+		    }
+	
+		    int affected = userService.deleteAdmin(id); // 트랜잭션 내부에서 roles→user 순으로 삭제
+		    if (affected > 0) {
+		      return ResponseEntity.ok(Map.of("success", true));
+		    }
+		    return ResponseEntity.ok(Map.of("success", false, "message", "대상이 없거나 이미 삭제되었습니다."));
+		  } catch (Exception e) {
+		    e.printStackTrace();
+		    return ResponseEntity.status(500).body(Map.of("success", false, "message", "server error"));
+		  }
 	}
 }

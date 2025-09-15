@@ -196,7 +196,50 @@ a {
 .board-actions a { background-color: var(--primary-color); color: var(--bg-color-card) }
 .board-actions a:hover { background-color: var(--primary-color-hover); transform: translateY(-2px); }
 
+/* 작은 버튼 사이즈 */
+.id_check_box {display:flex; align-items: center;}
+.btn-sm { padding: 7px 10px; font-size: 13px; border-radius: 8px; margin-left:10px;}
 
+/* 세컨더리(회색) 기본 버튼 */
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: var(--text-color-light);
+  border-color: var(--secondary-color);
+}
+.btn-secondary:hover { background-color: var(--secondary-color-hover); }
+
+/* 아웃라인(테두리만) — 아이디 중복확인에 딱 좋음 */
+.btn-outline {
+  background: transparent;
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+.btn-outline:hover {
+  background: rgba(77, 171, 247, 0.08);
+  color: var(--primary-color-hover);
+  border-color: var(--primary-color-hover);
+}
+
+/* 성공/완료 느낌 */
+.btn-success {
+  background: linear-gradient(180deg, #53d39d, #2fcf90);
+  border-color: #2fcf90;
+  color: #fff;
+}
+/* 비활성/로딩 상태 */
+.btn[disabled], .btn:disabled { opacity: .55; cursor: not-allowed; box-shadow: none; transform: none; }
+.btn-loading { position: relative; pointer-events: none; }
+.btn-loading::after {
+  content: ""; position: absolute; right: 10px; top: 50%; width: 14px; height: 14px;
+  margin-top: -7px; border-radius: 50%;
+  border: 2px solid currentColor; border-top-color: transparent;
+  animation: btnspin .8s linear infinite;
+}
+@keyframes btnspin { to { transform: rotate(360deg); } }
+/* 힌트 텍스트 (중복확인 결과) */
+.hint { display:inline-block; margin-left: 8px; font-size: 12px; }
+.hint.ok { color: #16a34a; }      /* 초록 */
+.hint.err { color: #dc2626; }     /* 빨강 */
 /* ========================================================================= */
 /* 📄 Post & Form Styles */
 /* ========================================================================= */
