@@ -85,13 +85,15 @@ $(function(){
       // 초기 접기
       $("#menu-tree ul ul").hide();
 
-      // 1/2뎁스만 토글
-      $("#menu-tree").on("click", "span[data-depth='1'], span[data-depth='2']", function(e){
+      // 1뎁스 클릭 시 2,3뎁스 모두 열기
+      $("#menu-tree").on("click", "span[data-depth='1']", function(e){
         e.stopPropagation();
         var $li = $(this).closest("li");
-        var $sub = $li.children("ul");
-        if ($sub.length) {
-          $sub.slideToggle(150);
+        var $subs = $li.find("ul"); // 현재 li 안의 모든 ul (2,3뎁스 포함)
+
+        if ($subs.length) {
+          console.log("진입");
+          $subs.slideToggle(150);   // 모든 하위 ul 토글
           $li.toggleClass("open");
         }
       });

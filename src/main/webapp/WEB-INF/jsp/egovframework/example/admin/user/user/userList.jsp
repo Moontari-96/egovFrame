@@ -28,20 +28,20 @@
         </thead>
         <tbody>
             <c:choose>
-                <c:when test="${not empty adminList}">
-                    <c:forEach var="admin" items="${adminList}" varStatus="s">
+                <c:when test="${not empty userList}">
+                    <c:forEach var="user" items="${userList}" varStatus="s">
                         <tr>
                             <td>${rowNoStart - s.index}</td>
                             <td style="text-align:left;">
-                                <a href="<c:url value='/admin/user/adminDetail.do'>
-                                            <c:param name='id' value='${admin.id}'/>
+                                <a href="<c:url value='/admin/user/userDetail.do'>
+                                            <c:param name='id' value='${user.id}'/>
                                          </c:url>">
-                                    ${admin.user_id}
+                                    ${user.user_id}
                                 </a>
                             </td>
-                            <td>${admin.user_name}</td>
+                            <td>${user.user_name}</td>
                             <td>
-                            	<c:set var="status" value="${admin.user_status}" />
+                            	<c:set var="status" value="${user.user_status}" />
 									<c:choose>
 									  <c:when test="${status == 'active'}">활성</c:when>
 									  <c:when test="${status == 'dormant'}">휴면</c:when>
@@ -49,13 +49,13 @@
 									  <c:otherwise>미정</c:otherwise>
 									</c:choose>
                             </td>
-                            <td class="date-cell" data-date="${admin.create_at}"></td>
+                            <td class="date-cell" data-date="${user.create_at}"></td>
                         </tr>
                     </c:forEach>
                 </c:when>
                 <c:otherwise>
                     <tr>
-                        <td colspan="5">등록된 관리자가 없습니다.</td>
+                        <td colspan="5">등록된 사용자가 없습니다.</td>
                     </tr>
                 </c:otherwise>
             </c:choose>
@@ -66,7 +66,7 @@
     <div class="pagination">
         <c:choose>
             <c:when test="${page > 1}">
-                <a href="<c:url value='/admin/user/adminList.do'>
+                <a href="<c:url value='/admin/user/userList.do'>
                            <c:param name='page' value='1'/>
                            <c:param name='size' value='${size}'/>
                          </c:url>">« </a>
@@ -77,7 +77,7 @@
         <c:set var="prevBlockPage" value="${startPage - 1}" />
         <c:choose>
             <c:when test="${prevBlockPage >= 1}">
-                <a href="<c:url value='/admin/user/adminList.do'>
+                <a href="<c:url value='/admin/user/userList.do'>
                            <c:param name='page' value='${prevBlockPage}'/>
                            <c:param name='size' value='${size}'/>
                          </c:url>">‹ </a>
@@ -91,7 +91,7 @@
                     <span class="active">${p}</span>
                 </c:when>
                 <c:otherwise>
-                    <a href="<c:url value='/admin/user/adminList.do'>
+                    <a href="<c:url value='/admin/user/userList.do'>
                                <c:param name='page' value='${p}'/>
                                <c:param name='size' value='${size}'/>
                              </c:url>">${p}</a>
@@ -102,7 +102,7 @@
         <c:set var="nextBlockPage" value="${endPage + 1}" />
         <c:choose>
             <c:when test="${nextBlockPage <= totalPages}">
-                <a href="<c:url value='/admin/user/adminList.do'>
+                <a href="<c:url value='/admin/user/userList.do'>
                            <c:param name='page' value='${nextBlockPage}'/>
                            <c:param name='size' value='${size}'/>
                          </c:url>"> ›</a>
@@ -112,7 +112,7 @@
 
         <c:choose>
             <c:when test="${page < totalPages}">
-                <a href="<c:url value='/admin/user/adminList.do'>
+                <a href="<c:url value='/admin/user/userList.do'>
                            <c:param name='page' value='${totalPages}'/>
                            <c:param name='size' value='${size}'/>
                          </c:url>"> »</a>
@@ -121,11 +121,11 @@
         </c:choose>
     </div>
 
-    <div class="board-actions">
-        <a href="<c:url value='/admin/user/adminCreateView.do'>
-                   <%-- <c:param name='boardId' value='${boardIdResolved}'/> --%>
+    <%-- <div class="board-actions">
+        <a href="<c:url value='/admin/user/userCreateView.do'>
+                   <c:param name='boardId' value='${boardIdResolved}'/>
               	</c:url>">관리자 등록</a>
-    </div>
+    </div> --%>
 </div>
 
 <script>

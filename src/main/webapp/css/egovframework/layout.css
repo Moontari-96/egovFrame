@@ -118,18 +118,18 @@ a {
 
 /* 1뎁스 */
 .depth-1 > span { font-weight: 700; cursor: pointer; }
-.depth-1 > span:hover { background: #e9f2ff; color: #0c63e4; }
+/* .depth-1 > span:hover { background: #e9f2ff; color: #0c63e4; } */
 
 /* 2뎁스 */
 .depth-2 > span { font-weight: 600; cursor: pointer; margin-left: 12px; }
-.depth-2 > span:hover { background: #e9f2ff; color: #0c63e4; }
+/* .depth-2 > span:hover { background: #e9f2ff; color: #0c63e4; } */
 
 /* 3뎁스 (링크) */
 .depth-3 > a { margin-left: 24px; color: #2b2b2b; }
 .depth-3 > a:hover { background: #e9f2ff; color: #0c63e4; }
 
 /* 자식 있는 노드만 화살표 */
-.has-sub > span::after {
+.depth-1 > span::after {
   content: "▶"; float: right; transition: transform .2s; opacity: .6;
 }
 .open > span::after { transform: rotate(90deg); }

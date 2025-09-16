@@ -83,4 +83,59 @@ public class AdminUserServiceImpl extends EgovAbstractServiceImpl implements Adm
 	public int deleteAdmin(Long userId) throws Exception {
 		return userMapper.deleteAdmin(userId); 
 	}
+	
+	// 관리자 계정 수정
+	@Override
+	public int adminUpdate(AdminUserVO dto) throws Exception {
+		String raw = dto.getUserPw();
+	    if (raw != null && !raw.isBlank()) {          // 비번 입력됨 → 해시 후 세팅
+	        dto.setUserPw(sha256Util.encrypt(raw));
+	    } else {                                      // 비번 미입력 → null 로 보내기
+	        dto.setUserPw(null);
+	    }
+		return userMapper.adminUpdate(dto); 
+	}
+	
+	// 관리자 권한 매핑 수정 	
+	@Override
+	public int updateAdminRoleMap(Long userId, Long roleId) throws Exception {
+		return userMapper.updateAdminRoleMap(userId, roleId); 
+	}
+	
+	// 사용자 카운트
+	@Override
+	public int countByUser() throws Exception {
+		return userMapper.countByUser();
+	}
+	
+	// 사용자 목록조회
+	@Override
+	public List<Map<String, Object>> findByUser(int size, int offset) throws Exception {
+		return userMapper.findByUser(size, offset); 
+	}
+	
+	// 사용자 상세
+	@Override
+	public Map<String, Object> findOneUser(Long id) throws Exception {
+		return userMapper.findOneUser(id); 
+	}
+	
+	// 사용자 계정 삭제
+	@Override
+	public int deleteUser(Long userId) throws Exception {
+		return userMapper.deleteUser(userId); 
+	}
+	
+	// 사용자 계정 수정
+	@Override
+	public int userUpdate(AdminUserVO dto) throws Exception {
+		String raw = dto.getUserPw();
+	    if (raw != null && !raw.isBlank()) {          // 비번 입력됨 → 해시 후 세팅
+	        dto.setUserPw(sha256Util.encrypt(raw));
+	    } else {                                      // 비번 미입력 → null 로 보내기
+	        dto.setUserPw(null);
+	    }
+		return userMapper.userUpdate(dto); 
+	}
+	
 }

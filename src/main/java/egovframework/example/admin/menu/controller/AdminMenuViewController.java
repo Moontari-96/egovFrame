@@ -21,7 +21,7 @@ import egovframework.example.admin.menu.service.AdminMenuVO;
 @RequestMapping("/admin/menu")
 public class AdminMenuViewController {
 
-    @Resource(name="menuService")
+    @Resource(name="adminMenuService")
     private AdminMenuService menuService;
 
     @GetMapping("/mgmt.do")

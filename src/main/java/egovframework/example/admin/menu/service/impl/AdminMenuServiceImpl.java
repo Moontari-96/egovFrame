@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import egovframework.example.admin.menu.service.AdminMenuService;
 import egovframework.example.admin.menu.service.AdminMenuVO;
 
-@Service("menuService")
+@Service("adminMenuService")
 public class AdminMenuServiceImpl extends EgovAbstractServiceImpl implements AdminMenuService {
 	@Resource(name="adminMenuMapper")
 	adminMenuMapper menuMapper;

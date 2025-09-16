@@ -31,7 +31,7 @@ import egovframework.example.admin.menu.service.AdminMenuVO;
 @RestController
 @RequestMapping("/admin/menu")
 public class AdminMenuController {
-    @Resource(name="menuService") // name 주의: 소문자 시작
+    @Resource(name="adminMenuService") // name 주의: 소문자 시작
     private AdminMenuService menuService;
     
 //    @GetMapping("/menu.do")

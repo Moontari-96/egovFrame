@@ -1,0 +1,143 @@
+/* ===========================
+   기본 CSS 변수 / 리셋
+   =========================== */
+:root{
+  /* 색상 토큰 */
+  --bg:#ffffff;                 /* 전체 배경 */
+  --text:#1f2937;               /* 기본 본문 글자 */
+  --muted:#667085;              /* 보조 텍스트 */
+  --line:#e5e8eb;               /* 테두리/구분선 */
+  --primary:#2563eb;            /* 포인트 색 */
+  --primary-weak:#eff6ff;       /* 옅은 포인트 배경 */
+  --sidebar:#f8fafc;            /* 사이드 배경 */
+  --soft:#f6f8fc;               /* 헤더-메가메뉴 연결용 톤 */
+  --header-h:56px;              /* 기본 헤더 높이(JS에서 --mega-top 갱신 권장) */
+}
+
+*{ box-sizing:border-box; }
+html,body{
+  margin:0; padding:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",Arial,sans-serif;
+  color:var(--text); background:var(--bg);
+}
+a{ color:inherit; text-decoration:none; }
+a:focus-visible{ outline:2px solid var(--primary); outline-offset:2px; border-radius:6px; }
+.muted{ color:var(--muted); }
+
+/* ===========================
+   헤더 / 상단 네비
+   =========================== */
+.header{
+  position:sticky; top:0;
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  z-index:1010;                 /* 헤더가 항상 맨 위 */
+}
+.header__bar{
+  max-width:1200px; margin:0 auto;
+  padding:12px 16px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.brand{ font-weight:700; color:var(--primary); }
+.topnav__link{ margin-left:16px; padding:6px 8px; border-radius:8px; }
+.topnav__link:hover{ background:#eef5ff; }
+.btn-menu{
+  border:1px solid var(--line); background:#fff;
+  border-radius:10px; padding:6px 10px; cursor:pointer;
+}
+
+/* ===========================
+   메가 메뉴 (Overlay: 콘텐츠 위에 겹침)
+   - 헤더에 .is-menu-open 이 붙으면 노출
+   - --mega-top 은 JS로 header.bottom 픽셀값을 넣어주면 정확히 맞음
+   =========================== */
+.mega{
+  position:fixed;               /* 문서 흐름에서 분리 → 아래 콘텐츠 안 밀림 */
+  left:0; right:0;
+  top:var(--mega-top, var(--header-h));
+  z-index:1005;                 /* 헤더 아래, 콘텐츠 위 */
+  background:linear-gradient(#fff 0, #fff 6px, var(--soft) 6px);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 8px 26px rgba(0,0,0,.06);
+
+  /* 닫힘 상태 */
+  opacity:0; transform:translateY(-6px);
+  pointer-events:none;
+  transition:opacity .18s ease, transform .22s ease;
+}
+.is-menu-open .mega{
+  opacity:1; transform:translateY(0);
+  pointer-events:auto;
+}
+
+/* 내부 컨테이너: 높이 캡 + 스크롤 */
+.mega__inner{
+  max-width:1200px; margin:0 auto;
+  padding:20px 24px;
+  max-height:min(78vh, calc(100vh - var(--mega-top, var(--header-h)) - 12px));
+  overflow:auto;
+}
+
+/* (평면/섹션 탬플릿 공용) */
+.mega-list, .mega-sections{ list-style:none; margin:0; padding:0; }
+.mega-section{ padding:8px 0; border-top:1px dashed var(--line); }
+.mega-section:first-child{ border-top:none; }
+.section-head{ font-weight:700; padding:6px 4px; }
+.section-items{ list-style:none; margin:2px 0 8px 0; padding:0 0 0 14px; }
+.section-items li{ padding:3px 0; }
+.mega-link{ display:inline-block; padding:4px 2px; border-radius:6px; }
+.mega-link:hover{ background:#fff; }
+
+/* ===========================
+   컬럼형 메가메뉴 (2뎁스 제목 + 3뎁스 링크들)
+   =========================== */
+.mega--columns .mega-cols{
+  list-style:none; margin:0; padding:0;
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:24px;
+}
+.mega--columns .mega-col{ position:relative; padding-left:16px; }
+.mega--columns .mega-col:not(:first-child)::before{
+  content:""; position:absolute; left:0; top:0; bottom:0; width:1px; background:var(--line);
+}
+.mega--columns .col-title{ font-weight:800; margin:0 0 10px 0; }
+.mega--columns .col-links{ list-style:none; margin:0; padding:0; }
+.mega--columns .col-links li{ margin:6px 0; }
+.mega--columns .mega-link{ display:inline-block; padding:4px 2px; border-radius:6px; }
+.mega--columns .mega-link:hover{ background:#fff; }
+
+/* ===========================
+   레이아웃 / 컨텐츠 공통
+   =========================== */
+.container{ max-width:1200px; margin:16px auto; padding:0 16px; }
+.sidebar{
+  background:var(--sidebar);
+  border:1px solid var(--line);
+  border-radius:12px; padding:12px;
+}
+.content{ min-height:60vh; }
+.card{
+  background:#fff; border:1px solid var(--line);
+  border-radius:12px; padding:16px;
+}
+.card__title{ margin:0 0 8px 0; font-size:20px; }
+.card__text{ margin:0; color:#334155; }
+.footer{
+  border-top:1px solid var(--line);
+  margin-top:24px; background:#fff;
+}
+.footer__inner{
+  max-width:1200px; margin:0 auto;
+  padding:16px; color:var(--muted); font-size:12px;
+}
+
+/* ===========================
+   반응형
+   =========================== */
+@media (max-width: 960px){
+  .mega__inner{ max-height:min(82vh, calc(100vh - var(--mega-top, var(--header-h)) - 8px)); }
+  .mega--columns .mega-cols{ grid-template-columns:1fr; }
+  .container{ grid-template-columns:1fr; }
+  .sidebar{ order:2; }
+  .content{ order:1; }
+}

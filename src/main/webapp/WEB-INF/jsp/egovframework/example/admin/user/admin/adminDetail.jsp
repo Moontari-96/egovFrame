@@ -15,7 +15,7 @@
 <c:url var="LIST_URL"    value="/admin/user/adminList.do"/>
 <c:url var="CHECK_ID_URL" value="/admin/user/checkId.do"/>
 <c:url var="CREATE_URL"   value="/admin/user/adminCreate.do"/>
-<c:url var="UPDATE_URL"   value="/admin/user/adminuUdate.do"/>
+<c:url var="UPDATE_URL"   value="/admin/user/adminUpdate.do"/>
 <c:url var="DELETE_URL"   value="/admin/user/adminDelete.do"/>
 
 <div class="card">
@@ -236,8 +236,7 @@
 
       var payload = {
         id: '${isEdit ? admin.id : ""}',
-        userId: elUserId.value.trim(),  // readonly
-        password: elPw.value,           // 비었으면 서버에서 변경 안 함
+        userPw: elPw.value,           // 비었으면 서버에서 변경 안 함
         userName: elName.value.trim(),
         userEmail: elEmail.value.trim(),
         userStatus: elStatus.value,
@@ -262,7 +261,8 @@
       }
     });
   }
-  // 수정
+  
+  // 삭제
   var btnDelete = document.getElementById('deleteBtn');
   if (btnDelete) {
 	  btnDelete.addEventListener('click', async function(){

@@ -107,4 +107,93 @@
 	 	where
 	 		id = #{id}
 	</delete>
+	
+	
+	<update id="adminUpdate">
+		update
+			user_info
+		  <set>
+		    <if test="userPw != null">user_pw = #{userPw},</if>
+		    <if test="userName != null">user_name = #{userName},</if>
+		    <if test="userEmail != null">user_email = #{userEmail},</if>
+		    <if test="userStatus != null">user_status = #{userStatus},</if>
+		  </set>
+		where
+			id = #{id}
+	</update>
+	
+	<update id="updateAdminRoleMap" parameterType="map">
+		update
+			user_roles
+		set
+			role_id = #{roleId}
+		where
+			user_id = #{userId}
+	</update>
+	
+	<select id="countByUser" resultType="int">
+   	    select
+   			count(*)
+		from
+		    user_info
+		where
+		    id not in (select user_id from user_roles);
+	</select>
+	
+	<select id="findByUser" resultType="map">
+	    select 
+	        id,
+	        user_id,
+	        user_name,
+	        user_email,
+	        user_status,
+	        create_at,
+	        update_at
+	    from
+	    	user_info 
+		where
+	    	id not in (select user_id from user_roles)
+	    limit 
+        	#{size} 
+        offset
+        	#{offset}
+	</select>
+	
+	<select id="findOneUser" resultType="map">
+	    select 
+	        u.id,
+	        u.user_id,
+	        u.user_name,
+	        u.user_email,
+	        u.user_status,
+	        u.create_at,
+	        u.update_at
+	    from
+	    	user_info u
+	    where
+	    	u.id = #{id}
+	   	and 
+	   		id not in (select user_id from user_roles)
+	</select>
+	
+	<delete id="deleteUser">
+	 	delete 
+	 		from user_info
+	 	where
+	 		id = #{id}
+	</delete>
+	
+	
+	<update id="userUpdate">
+		update
+			user_info
+		  <set>
+		    <if test="userPw != null">user_pw = #{userPw},</if>
+		    <if test="userName != null">user_name = #{userName},</if>
+		    <if test="userEmail != null">user_email = #{userEmail},</if>
+		    <if test="userStatus != null">user_status = #{userStatus},</if>
+		  </set>
+		where
+			id = #{id}
+	</update>
 </mapper>

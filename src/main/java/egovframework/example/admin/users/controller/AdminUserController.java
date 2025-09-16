@@ -134,7 +134,7 @@ public class AdminUserController {
 	};
 	
 	// 관리자 상세 view
-	@RequestMapping("/detail.do")
+	@RequestMapping("/adminDetail.do")
 	public String adminDetailView(@RequestParam("id") Long id, Model model) {
 		try {
 			String pageTitle = "관리자 상세";
@@ -228,7 +228,7 @@ public class AdminUserController {
 	        return ResponseEntity.status(500).body(body);
 	    }
 	}
-	// 관리자 등록
+	// 관리자 삭제
 	@PostMapping("adminDelete.do")
 	@ResponseBody
 	public ResponseEntity<Map<String,Object>> adminDelete (@RequestParam("id") Long id, HttpSession session) {
@@ -251,5 +251,142 @@ public class AdminUserController {
 		    e.printStackTrace();
 		    return ResponseEntity.status(500).body(Map.of("success", false, "message", "server error"));
 		  }
+	}
+	
+	// 관리자 계정 업데이트
+	@PostMapping("/adminUpdate.do")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> adminUpdate(@RequestBody AdminUserVO dto) {
+			System.out.println(dto.getId()+ "들어오는값확인");
+		   System.out.println(dto.getUserPw()+ "들어오는값확인");
+		   System.out.println(dto.getUserName()+ "들어오는값확인");
+		   System.out.println(dto.getUserStatus()+ "들어오는값확인");
+		   System.out.println(dto.getRoleId()+ "들어오는값확인");
+		   System.out.println(dto.getUserEmail()+ "들어오는값확인");
+		   try {
+				    int update = userService.adminUpdate(dto);
+				    if (update > 0) {
+				    	userService.updateAdminRoleMap(dto.getId(), dto.getRoleId());
+				    	return ResponseEntity.ok(Map.of(
+						           "success", true,
+						           "message", "success"
+						       ));
+				    } else {
+				    	return ResponseEntity.status(500).body(Map.of(
+						           "success", false,
+						           "message", "server error"
+						       ));
+				    }
+			} catch (Exception e) {
+				// TODO: handle exception
+			   e.printStackTrace();
+		       return ResponseEntity.status(500).body(Map.of(
+		           "success", false,
+		           "message", "server error"
+		       ));
+			}
+			
+	}
+	
+	// 사용자 목록 조회
+	@RequestMapping("/userList.do")
+	public String userList(HttpSession session, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
+		try {
+			int totalCount = userService.countByUser();
+			int offset = (page - 1) * size;
+			List<Map<String, Object>> userList = userService.findByUser(size, offset);
+			// 게시판 이름 (글이 0개일 때도 대비)
+			String pageTitle = "사용자 관리";
+			// 페이징 계산(5개짜리 블록)
+			int totalPages = (int) Math.ceil((double) totalCount / size);
+			if (totalPages < 1) totalPages = 1;
+			
+			int blockSize = 5;
+			int currentBlock = (page - 1) / blockSize;
+			int startPage = currentBlock * blockSize + 1;
+			int endPage = Math.min(startPage + blockSize - 1, totalPages);
+			int rowNoStart = totalCount - (page - 1) * size;
+			System.out.println(userList+ "게시물 리스트 확인");
+			// 모델 바인딩
+			model.addAttribute("userList", userList);
+			model.addAttribute("pageTitle", pageTitle);
+			model.addAttribute("page", page);
+			model.addAttribute("size", size);
+			model.addAttribute("totalCount", totalCount);
+			model.addAttribute("totalPages", totalPages);
+			model.addAttribute("blockSize", blockSize);
+			model.addAttribute("startPage", startPage);
+			model.addAttribute("endPage", endPage);
+			model.addAttribute("rowNoStart", rowNoStart);
+			model.addAttribute("contentPage", "/WEB-INF/jsp/egovframework/example/admin/user/user/userList.jsp");
+			return "/layout/admin/layout";
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return "/layout/admin/layout";
+		}
+
+	};
+	
+	// 사용자 상세 view
+	@RequestMapping("/userDetail.do")
+	public String userDetailView(@RequestParam("id") Long id, Model model) {
+		try {
+			String pageTitle = "사용자 상세";
+			Map<String, Object> user = userService.findOneUser(id);
+			model.addAttribute("user", user);
+			model.addAttribute("pageTitle", pageTitle);
+			model.addAttribute("contentPage", "/WEB-INF/jsp/egovframework/example/admin/user/user/userDetail.jsp");
+			return "/layout/admin/layout";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "/layout/admin/layout";
+			// TODO: handle exception
+		}
+		
+	}
+	
+	// 사용자 삭제
+	@PostMapping("userDelete.do")
+	@ResponseBody
+	public ResponseEntity<Map<String,Object>> userDelete (@RequestParam("id") Long id, HttpSession session) {
+		try {
+		    int affected = userService.deleteUser(id); // 트랜잭션 내부에서 roles→user 순으로 삭제
+		    if (affected > 0) {
+		      return ResponseEntity.ok(Map.of("success", true));
+		    }
+		    return ResponseEntity.ok(Map.of("success", false, "message", "대상이 없거나 이미 삭제되었습니다."));
+		  } catch (Exception e) {
+		    e.printStackTrace();
+		    return ResponseEntity.status(500).body(Map.of("success", false, "message", "server error"));
+		  }
+	}
+	
+	// 사용자 계정 업데이트
+	@PostMapping("/userUpdate.do")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> userUpdate(@RequestBody AdminUserVO dto) {
+		   try {
+				    int update = userService.userUpdate(dto);
+				    if (update > 0) {
+				    	return ResponseEntity.ok(Map.of(
+						           "success", true,
+						           "message", "success"
+						       ));
+				    } else {
+				    	return ResponseEntity.status(500).body(Map.of(
+						           "success", false,
+						           "message", "server error"
+						       ));
+				    }
+			} catch (Exception e) {
+				// TODO: handle exception
+			   e.printStackTrace();
+		       return ResponseEntity.status(500).body(Map.of(
+		           "success", false,
+		           "message", "server error"
+		       ));
+			}
+			
 	}
 }

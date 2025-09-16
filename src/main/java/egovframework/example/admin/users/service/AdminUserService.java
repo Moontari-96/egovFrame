@@ -26,6 +26,28 @@ public interface AdminUserService {
 	
 	// 관리자 권한매핑
 	int insertAdminRoleMap(Long userId, Long roleId) throws Exception;
+	
 	// 관리자 삭제
 	int deleteAdmin(Long id) throws Exception;
+	
+	// 관리자 계정 수정
+	int adminUpdate(AdminUserVO dto) throws Exception;
+	
+	// 관리자 권한매핑
+	int updateAdminRoleMap(Long userId, Long roleId) throws Exception;
+	
+	// 사용자 카운트
+	int countByUser() throws Exception;
+	
+	// 사용자 목록조회
+	List<Map<String, Object>> findByUser(int size, int offset) throws Exception;
+	
+	// 사용자 상세
+	Map<String, Object> findOneUser(Long id) throws Exception;
+	
+	// 관리자 삭제
+	int deleteUser(Long id) throws Exception;
+	
+	// 관리자 계정 수정
+	int userUpdate(AdminUserVO dto) throws Exception;
 }

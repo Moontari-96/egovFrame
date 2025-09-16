@@ -12,7 +12,7 @@
 
     <!-- 상단 헤더 -->
     <div class="header">
-        관리자 대시보드
+        <a href="<c:url value='/admin/home.do' />">관리자 대시보드</a>
         <div class="logout">
             <a href="<c:url value='/admin/user/logout.do' />">로그아웃</a>
         </div>
