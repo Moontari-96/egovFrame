@@ -29,6 +29,7 @@
     --border-radius-sm: 4px;
     --border-radius-md: 6px;
     --border-radius-lg: 12px;
+    --thumb-size: 200px;
 }
 
 /* Base Reset */
@@ -574,4 +575,131 @@ ul.tree-ul>li {
 
 .page {
     padding: 20px;
+}
+  
+/* 썸네일 프레임 */
+#thumbPreview {
+  width: var(--thumb-size);
+  aspect-ratio: 1 / 1;         /* 정사각형 유지 (고정 height 대신 권장) */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 10px;
+  overflow: hidden;
+  background-color: #f9f9f9;
+  position: relative;           /* 자식(img) 절대배치 기준 */
+  display: none;                /* 초기 숨김 */
+}
+
+/* 이미지 기본: 비율 유지하여 프레임 안에 맞춤(여백 있을 수 있음) */
+#thumbPreview .thumbnail-img {
+  position: absolute;
+  inset: 0;                     /* top/right/bottom/left: 0 */
+  width: 100%;
+  height: 100%;
+  object-fit: contain;          /* 전체가 보이도록(잘리지 않음) */
+  display: block;
+}
+
+/* 만약 프레임을 꽉 채우고 잘라도 된다면, 이 클래스를 #thumbPreview에 추가 */
+/* <div id="thumbPreview" class="fill"> 처럼 */
+#thumbPreview.fill .thumbnail-img {
+  object-fit: cover;            /* 꽉 채우고 넘치는 부분은 잘림 */
+}
+
+/* 선택 취소 시 숨김에 사용할 클래스 */
+#thumbPreview.is-hidden {
+  display: none !important;
+}
+/* 폼 그룹 및 라벨 */
+.form-group {
+    margin-bottom: 20px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* 첨부파일 컨테이너 */
+.attachments-container {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #fafafa;
+   	display:flex;
+   	flex-direction: column; 
+}
+
+/* 파일 목록 컨테이너 */
+.attachments-list-container {
+    margin-bottom: 15px;
+}
+
+/* 각 파일 아이템 (기존/새 파일 공통) */
+.attachment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+}
+
+.attachment-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* 파일명 */
+.file-name {
+    flex-grow: 1;
+    color: #444;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+/* 삭제 버튼 */
+.delete-btn {
+    cursor: pointer;
+    font-size: 1.4em; /* 더 잘 보이도록 크기 키움 */
+    color: #999;
+    font-weight: bold;
+    margin-left: 15px;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.delete-btn:hover {
+    color: #e74c3c;
+}
+
+/* 파일 추가 버튼 (커스텀) */
+.add-file-btn {
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.add-file-btn:hover {
+    background-color: #45a049;
+}
+
+.add-file-btn .icon {
+    font-size: 14px;
+    margin-right: 8px;
 }

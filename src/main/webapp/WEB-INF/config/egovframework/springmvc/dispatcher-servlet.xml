@@ -66,4 +66,12 @@
 	<!-- /For Pagination Tag -->
 
     <mvc:view-controller path="/cmmn/validator.do" view-name="cmmn/validator"/>
+	<mvc:resources mapping="/files/**" location="file:///C:/eGovFrameDev-4.3.1-64bit/fileCloud/" />
+
+    <bean id="multipartResolver"
+	      class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	  <property name="defaultEncoding" value="UTF-8"/>
+	  <property name="maxUploadSize" value="52428800"/>       <!-- 50MB -->
+	  <property name="maxUploadSizePerFile" value="10485760"/> <!-- 10MB -->
+	</bean>
 </beans>

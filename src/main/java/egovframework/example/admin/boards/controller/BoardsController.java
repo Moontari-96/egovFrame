@@ -22,10 +22,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import egovframework.example.admin.boards.service.BoardsService;
 import egovframework.example.admin.boards.service.BoardsVO;
 import egovframework.example.admin.boards.service.PostVO;
+import egovframework.example.admin.files.service.AdminFilesService;
+import egovframework.example.admin.files.service.AdminFilesVO;
 import egovframework.example.admin.users.service.AdminUserVO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,7 +37,8 @@ import lombok.NoArgsConstructor;
 public class BoardsController {
 	@Resource(name = "boardsService")
 	private BoardsService boardsService;
-	
+	@Resource(name = "adminFilesService")
+	private AdminFilesService filesService;
 //	@RequestMapping("/home.do")
 //	public String home(Model model) throws Exception {
 //		List<BoardsVO> mvo = boardsService.selectAll();
@@ -101,9 +105,12 @@ public class BoardsController {
 	    try {
 	    	// 게시글 상세 가져오기
 	    	PostVO postDetail = boardsService.getPostDetail(postId);
-	    	System.out.println(postDetail);
+	    	Long id = Long.parseLong(postId);
+	    	List<AdminFilesVO> files = filesService.getPostfiles(id);
+	    	System.out.println(files);
 	    	// 레이아웃 유지
 	    	model.addAttribute("post", postDetail);
+	    	model.addAttribute("files", files);
 	    	model.addAttribute("contentPage", "/WEB-INF/jsp/egovframework/example/admin/board/boardDetail.jsp");
 	    	return "/layout/admin/layout"; 
 		} catch (Exception e) {
@@ -174,9 +181,9 @@ public class BoardsController {
 	}
 	
 	@PostMapping("/createPost.do")
-	public ResponseEntity<String> postCreate(@RequestBody PostVO dto, HttpServletRequest request, HttpSession session){
+	public ResponseEntity<String> postCreate(PostVO dto, HttpServletRequest request, HttpSession session){
 		AdminUserVO loginUser = (AdminUserVO) session.getAttribute("adminUser");
-		System.out.println("게시물 생성요청 진입확인");
+
 		if (loginUser != null) {
 		    String userId = loginUser.getUserId();
 		} else {
@@ -185,8 +192,8 @@ public class BoardsController {
 		// 3) 업데이트 메타 정보 세팅
 	    dto.setCreatedById(loginUser.getUserId());
 		try {
-			int create = boardsService.createPost(dto);
-			if (create == 0) {
+			Long create = boardsService.createPost(dto);
+			if (create == null) {
 	            // 대상 게시글이 없거나 이미 삭제된 경우
 	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("POST_NOT_FOUND");
 	        }

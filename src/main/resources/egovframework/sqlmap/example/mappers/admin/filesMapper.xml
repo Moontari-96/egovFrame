@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="egovframework.example.admin.files.service.impl.adminFilesMapper">
+	  <insert id="insertFile"
+          parameterType="egovframework.example.admin.files.service.AdminFilesVO">
+	    insert into post_file
+	    <trim prefix="(" suffix=")" suffixOverrides=",">
+	      post_id, file_path, file_oriname, file_sysname, file_size,
+	      <if test="fileRole != null">file_role,</if>
+	    </trim>
+	    <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+	      #{postId}, #{filePath}, #{fileOriname}, #{fileSysname}, #{fileSize,jdbcType=BIGINT},
+	      <if test="fileRole != null">#{fileRole},</if>
+	    </trim>
+	  </insert>
+	  
+	  <select id="getPostfiles" resultType="AdminFilesVO">
+	  	select
+	  		*
+	  	from
+	  		post_file
+	  	where
+	  		post_id = #{postId}
+	  </select>
+</mapper>

@@ -42,11 +42,6 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
-		<repository>
-			<id>projectRepository</id>
-			<name>Project Repository</name>
-			<url>file://${project.basedir}/src/main/webapp/WEB-INF/lib</url>
-		</repository>
     </repositories>
 
 	<dependencies>
@@ -62,6 +57,22 @@
 		    	</exclusion>
 		    </exclusions>
         </dependency>
+        <dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-web</artifactId>
+		    <version>${spring.maven.artifact.version}</version>
+		    
+		  </dependency>
+		  <dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-webmvc</artifactId>
+		    <version>${spring.maven.artifact.version}</version>
+		  </dependency>
+	  <dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-context</artifactId>
+	    <version>${spring.maven.artifact.version}</version>
+	  </dependency>
         <dependency>
 		    <groupId>org.egovframe.rte</groupId>
 		    <artifactId>org.egovframe.rte.psl.dataaccess</artifactId>
@@ -209,24 +220,9 @@
 		    <scope>runtime</scope>
 		</dependency>
 		<dependency>
-		    <groupId>com.fasterxml.jackson.core</groupId>
-		    <artifactId>jackson-databind</artifactId>
-		    <version>2.15.2</version>
-		</dependency>
-		<dependency>
-		    <groupId>com.fasterxml.jackson.core</groupId>
-		    <artifactId>jackson-annotations</artifactId>
-		    <version>2.15.2</version>
-		</dependency>
-		<dependency>
-		    <groupId>com.fasterxml.jackson.core</groupId>
-		    <artifactId>jackson-core</artifactId>
-		    <version>2.15.2</version>
-		</dependency>
-		<dependency>
 		  <groupId>com.fasterxml.jackson.core</groupId>
 		  <artifactId>jackson-databind</artifactId>
-		  <version>2.17.0</version> <!-- 프로젝트 버전에 맞게 -->
+		  <version>2.17.0</version>
 		</dependency>
 		<dependency>
 		  <groupId>com.fasterxml.jackson.core</groupId>
@@ -237,6 +233,16 @@
 		  <groupId>com.fasterxml.jackson.core</groupId>
 		  <artifactId>jackson-annotations</artifactId>
 		  <version>2.17.0</version>
+		</dependency>
+		<dependency>
+		  <groupId>commons-fileupload</groupId>
+		  <artifactId>commons-fileupload</artifactId>
+		  <version>1.5</version>
+		</dependency>
+		<dependency>
+		  <groupId>commons-io</groupId>
+		  <artifactId>commons-io</artifactId>
+		  <version>2.15.1</version>
 		</dependency>
 	</dependencies>
 

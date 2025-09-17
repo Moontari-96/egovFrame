@@ -44,8 +44,6 @@
 			</list>
 		</property>
 	</bean>
-	
 	<bean id="antPathMater" class="org.springframework.util.AntPathMatcher" />
 	<bean id="defaultTraceHandler" class="org.egovframe.rte.fdl.cmmn.trace.handler.DefaultTraceHandler" />
-	 
 </beans>

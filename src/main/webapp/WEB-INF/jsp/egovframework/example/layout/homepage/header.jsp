@@ -57,13 +57,6 @@
 	                  </li>
 	                </c:if>
 	              </c:forEach>
-	
-	              <!-- 3뎁스가 하나도 없으면, 2뎁스를 클릭 항목으로 대체(원치 않으면 이 블록 삭제) -->
-	              <c:if test="${not has3}">
-	                <li>
-	                  <a href="<c:url value='${m2.menuUrl}'/>" class="mega-link">${m2.menuName}</a>
-	                </li>
-	              </c:if>
 	            </ul>
 	          </li>
 	        </c:if>

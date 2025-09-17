@@ -72,6 +72,10 @@
 	</update>
 
 	<insert id="createPost" parameterType="PostVO">
+	    <selectKey keyProperty="postId" resultType="Long" order="AFTER">
+	        select last_insert_id()
+	    </selectKey>
+	
 		insert into 
 			post_info (board_id, created_by_id, title, content)
 		values
