@@ -590,6 +590,10 @@ ul.tree-ul>li {
   display: none;                /* 초기 숨김 */
 }
 
+.haveThum{
+  display: block !important;  
+}
+
 /* 이미지 기본: 비율 유지하여 프레임 안에 맞춤(여백 있을 수 있음) */
 #thumbPreview .thumbnail-img {
   position: absolute;
@@ -606,11 +610,6 @@ ul.tree-ul>li {
   object-fit: cover;            /* 꽉 채우고 넘치는 부분은 잘림 */
 }
 
-/* 선택 취소 시 숨김에 사용할 클래스 */
-#thumbPreview.is-hidden {
-  display: none !important;
-}
-/* 폼 그룹 및 라벨 */
 .form-group {
     margin-bottom: 20px;
 }
@@ -634,6 +633,8 @@ ul.tree-ul>li {
 /* 파일 목록 컨테이너 */
 .attachments-list-container {
     margin-bottom: 15px;
+  	display:flex;
+   	flex-direction: column; 
 }
 
 /* 각 파일 아이템 (기존/새 파일 공통) */
@@ -674,6 +675,8 @@ ul.tree-ul>li {
     margin-left: 15px;
     line-height: 1;
     transition: color 0.2s;
+    background: none;
+    border: none;
 }
 
 .delete-btn:hover {

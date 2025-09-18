@@ -22,6 +22,6 @@ public interface boardsMapper {
 	int countByBoard(String boardId);
 	PostVO getPostDetail(String postId);
 	Long createPost(PostVO dto);
-	int updatePost(PostVO dto);
+	Long updatePost(PostVO dto);
 	int deletePost(Map<String,Object> param);
 }

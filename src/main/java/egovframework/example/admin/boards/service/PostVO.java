@@ -26,6 +26,7 @@ public class PostVO {
     private Boolean notice;	// 공지 여부
     private MultipartFile thumbnail;	// 썸네일
     private List<MultipartFile> attachments;	// 첨부파일
+    private List<Long> deletedFileIds;
     private LocalDateTime createdAt; // 생성일 
     private LocalDateTime updatedAt; // 수정일
 }

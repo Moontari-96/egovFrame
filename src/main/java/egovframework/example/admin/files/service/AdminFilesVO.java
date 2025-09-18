@@ -18,5 +18,6 @@ public class AdminFilesVO {
 	private Long fileSize;
     private MultipartFile thumbnail;	// 썸네일
     private List<MultipartFile> attachments;	// 첨부파일
+    private List<Long> deletedFileIds;
     private LocalDateTime createdAt; // 수정일
 }

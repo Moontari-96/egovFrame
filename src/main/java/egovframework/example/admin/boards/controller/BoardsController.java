@@ -132,7 +132,7 @@ public class BoardsController {
 	}
 	
 	@PostMapping("/updatePost.do")
-	public ResponseEntity<String> postUpdate(@RequestBody PostVO dto, HttpServletRequest request, HttpSession session){
+	public ResponseEntity<String> postUpdate(PostVO dto, HttpServletRequest request, HttpSession session){
 		AdminUserVO loginUser = (AdminUserVO) session.getAttribute("adminUser");
 		if (loginUser != null) {
 		    String userId = loginUser.getUserId();
@@ -141,9 +141,10 @@ public class BoardsController {
 		}
 		// 3) 업데이트 메타 정보 세팅
 	    dto.setUpdateById(loginUser.getUserId());
-		try {
-			int update = boardsService.updatePost(dto);
-			if (update == 0) {
+		System.out.println(dto + "수정 진행중");
+	    try {
+			Long update = boardsService.updatePost(dto);
+			if (update == null) {
 	            // 대상 게시글이 없거나 이미 삭제된 경우
 	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("POST_NOT_FOUND");
 	        }
@@ -170,6 +171,7 @@ public class BoardsController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("LOGIN_REQUIRED");
 		}
 		try {
+            System.out.println("진입확인3");
 			int delete = boardsService.deletePost(param);
 			if (delete == 0) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("POST_NOT_FOUND");

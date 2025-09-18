@@ -34,17 +34,27 @@
 	    <div class="post-content">
 	    	<div class="form-group">
 			  <label>썸네일</label>
-			  	<input type="file" id="thumb" name="thumb" accept="image/*">
-			 	<div id="thumbPreview">
-			 		<c:forEach var="file" items="${files}">
-					    <c:if test="${file.fileRole eq 'THUMBNAIL'}">
-					        <div class="thumbnail-container">
-					        
-					            <img src="<c:url value='/files/${file.fileSysname}'/>" class="thumbnail-img" alt="${file.fileOriname}">
-					        </div>
-					    </c:if>
-					</c:forEach>
-			 	</div>
+				<input type="file" id="thumb" name="thumb" accept="image/*">
+				
+				<c:set var="thumbFile" value="${null}" />
+				<c:forEach var="f" items="${files}">
+				  <c:if test="${thumbFile == null and f.fileRole eq 'THUMBNAIL'}">
+				    <c:set var="thumbFile" value="${f}" />
+				  </c:if>
+				</c:forEach>
+				
+				<div id="thumbPreview"
+				     class="thumb fill ${thumbFile ne null ? 'haveThum' : ''}"
+				     data-mode="${isEdit ? 'edit' : 'create'}"
+				     data-existing-id="${thumbFile ne null ? thumbFile.fileId : ''}"
+				     data-existing="<c:if test='${thumbFile ne null}'><c:url value='/files/${thumbFile.fileSysname}'/></c:if>"
+				     style="${thumbFile ne null ? '' : 'display:none'}">
+				  <c:if test="${thumbFile ne null}">
+				    <img src="<c:url value='/files/${thumbFile.fileSysname}'/>"
+				         class="thumbnail-img"
+				         alt="${thumbFile.fileOriname}">
+				  </c:if>
+				</div>
 			</div>
 			<div class="form-group">
             	<div class="field"><label>공지 여부</label>
@@ -66,16 +76,24 @@
 	        
 	  		<div class="form-group">
 			  <label for="attachments">첨부파일</label>
-			  <div class="attachments-container">
-			    <div id="attachmentsPreview" class="attachments-list-container"></div>
-			    
-			    <input type="file" name="attachments" id="attachments" multiple style="display: none;">
-			    <button type="button" id="addFileBtn" class="add-file-btn">
-			      <span class="icon">&#43; 파일 추가</span> 
-			    </button>
-			  </div>
-			</div>
-			<input type="hidden" name="deletedFileIds" id="deletedFileIds" value="">
+				<div class="attachments-container">
+				  <div id="attachmentsPreview" class="attachments-list-container">
+				    <c:forEach var="f" items="${files}">
+				      <c:if test="${f.fileRole ne 'THUMBNAIL'}">
+				        <div class="attachment-item" data-type="existing" data-file-id="${f.fileId}">
+				          <a class="file-name" target="_blank" download="${f.fileOriname}"
+				             href="<c:url value='/files/${f.fileSysname}'/>"><c:out value="${f.fileOriname}"/></a>
+				          <button type="button" class="delete-btn" data-type="existing" title="삭제">&times;</button>
+				        </div>
+				      </c:if>
+				    </c:forEach>
+				  </div>
+				  <input type="file" name="attachments" id="attachments" multiple style="display:none;">
+				  <button type="button" id="addFileBtn" class="add-file-btn">
+				    <span class="icon">+ 파일 추가</span>
+				  </button>
+				</div>
+				<input type="hidden" name="deletedFileIds" id="deletedFileIds" value="">
 	    </div>
 	
 	    <div class="post-actions">
@@ -93,7 +111,11 @@
 	</div>
 
 	<script>
-	
+	/** 공용 상태 **/
+	var deletedFileIds = [];                  // 서버에 지울 기존 파일 ID 모음
+	let attachStore = new DataTransfer();        // 새 첨부 누적 저장
+	function tokenOf(f) { return f.name + '__' + f.size + '__' + f.lastModified; }
+	const newFileTokens = new Set(); // 중복 방지용
     // 삭제 버튼 클릭 시 동작하는 JavaScript 함수
     function deletePost(postId) {
         if (confirm('정말 이 게시물을 삭제하시겠습니까?')) {
@@ -144,132 +166,174 @@
     });
     
     
-   	// 썸네일 
-	document.getElementById('thumb').addEventListener('change', function(event) {
-	    const file = event.target.files[0];
-	    const preview = document.getElementById('thumbPreview');
-	
-	    // #thumbPreview 내부의 모든 자식 요소를 제거
-	    preview.innerHTML = '';
-	    
+   	// 파일관리 
+	document.addEventListener('DOMContentLoaded', () => {
+	  const thumbInput        = document.getElementById('thumb');
+	  const thumbPreview      = document.getElementById('thumbPreview');
+	  const attachmentsInput  = document.getElementById('attachments');
+	  const addFileBtn        = document.getElementById('addFileBtn');
+	  const previewContainer  = document.getElementById('attachmentsPreview');
+	  const deletedField      = document.getElementById('deletedFileIds');
+	  const MAX_FILE_COUNT = 5; // 최대 파일 개수 제한
+
+	  /** 썸네일 미리보기 + 기존 썸네일 교체시 삭제 목록 추가 **/
+	  thumbInput.addEventListener('change', (e) => {
+	    const file = e.target.files && e.target.files[0];
+	    thumbPreview.innerHTML = '';
 	    if (file) {
-	        const reader = new FileReader();
-	        reader.onload = function(e) {
-	            const img = document.createElement('img');
-	            img.src = e.target.result;
-	            img.alt = file.name;
-	            img.classList.add('thumbnail-img');
-	
-	            preview.style.display = 'block';
-	            preview.appendChild(img);
-	        };
-	        reader.readAsDataURL(file);
+	      // 기존 썸네일이 있으면 삭제 목록에 추가
+	        var existingId = thumbPreview.getAttribute('data-existing-id');
+	        if (existingId) {
+	          if (deletedFileIds.indexOf(existingId) === -1) {
+	            deletedFileIds.push(existingId);
+	            deletedField.value = deletedFileIds.join(',');
+	          }
+	          thumbPreview.setAttribute('data-existing-id', '');
+	        }
+	        var url = URL.createObjectURL(file);
+	        var img = new Image();
+	        img.className = 'thumbnail-img';
+	        img.src = url;
+	        img.alt = file.name;
+	        img.onload = function () { URL.revokeObjectURL(url); };
+	        thumbPreview.style.display = 'block';
+	        thumbPreview.appendChild(img);
 	    } else {
-	        // 파일 선택 취소 시 기존 미리보기 div의 내용을 유지하지 않고 숨김
-	        preview.style.display = 'none';
+	      // 선택 취소: edit 모드 + 기존 썸네일 있으면 다시 보여주고, 아니면 숨김
+	      var existing = thumbPreview.getAttribute('data-existing');
+	      if (existing) {
+	        var img2 = new Image();
+	        img2.className = 'thumbnail-img';
+	        img2.src = existing;
+	        img2.alt = 'thumbnail';
+	        thumbPreview.style.display = 'block';
+	        thumbPreview.appendChild(img2);
+	      } else {
+	        thumbPreview.style.display = 'none';
+	      }
 	    }
-	});
-
-    // 첨부파일
-	// 삭제할 파일 ID를 저장할 전역 배열
-	document.addEventListener('DOMContentLoaded', function() {
-	    const attachmentsInput = document.getElementById('attachments');
-	    const addFileBtn = document.getElementById('addFileBtn');
-	    const previewContainer = document.getElementById('attachmentsPreview');
-	    const deletedFilesField = document.getElementById('deletedFileIds');
-	    const deletedFileIds = [];
+	  });
 	
-	    // '파일 추가' 버튼 클릭 시, 숨겨진 파일 입력 필드 클릭
-	    addFileBtn.addEventListener('click', () => {
-	        attachmentsInput.click();
-	    });
+	  /** 첨부: 파일 추가 버튼 */
+	  addFileBtn.addEventListener('click', function () {
+	    attachmentsInput.click();
+	  });	
+	  /** 첨부: 파일 선택 시 누적 + 미리보기 추가 + 중복 방지 */
+	  attachmentsInput.addEventListener('change', () => {
+	    const files = attachmentsInput.files;
+	    if (!files || files.length === 0) return;
+	 	// 기존에 업로드된 파일의 개수
+	    const existingFileCount = attachmentsPreview.querySelectorAll('.attachment-item').length;
+	    // 새로 추가된 파일의 개수
+	    const newFileCount = event.target.files.length;
+	    // 총 파일 개수
+	    const totalFileCount = existingFileCount + newFileCount;
+	    if (totalFileCount > MAX_FILE_COUNT) {
+	        alert('파일은 최대 ' + MAX_FILE_COUNT + '개까지만 첨부할 수 있습니다.');
+	        // 파일 입력 초기화
+	        fileInput.value = ''; 
+	        return; // 함수 종료
+	      }
+	    
+	    for (var i = 0; i < files.length; i++) {
+	        var f  = files[i];
+	        var tk = tokenOf(f);
+	        if (newFileTokens.has(tk)) continue;       // 중복 방지
 	
-	    // 파일 입력 필드 변경 이벤트 (새 파일 추가)
-	    attachmentsInput.addEventListener('change', function() {
-	        const files = this.files;
-	        console.log(attachmentsInput.files)
-	        console.log(files)
-	        for (let i = 0; i < files.length; i++) {
-	            const file = files[i];
-	            
-	            // 새로운 파일 항목 생성
-	            const fileItem = document.createElement('div');
-	            fileItem.classList.add('attachment-item', 'new-file'); // 새로운 파일임을 표시하는 클래스
-	            fileItem.innerHTML = '<span class="file-name">' + file.name + '</span>' +
-                '<span class="delete-btn" data-type="new">&times;</span>';
-	            previewContainer.appendChild(fileItem);
-	        }
-	    });
-
-   		// 미리보기 컨테이너에 이벤트 위임 (삭제 버튼 클릭 처리)
-   		previewContainer.addEventListener('click', function(event) {
-	        const deleteBtn = event.target.closest('.delete-btn');
-	        if (!deleteBtn) return;
+	        newFileTokens.add(tk);
+	        attachStore.items.add(f);                   // 누적 저장
 	
-	        const fileItem = deleteBtn.closest('.attachment-item');
-	        const fileId = fileItem.dataset.fileId;
-	        const fileType = deleteBtn.dataset.type;
+	        // DOM으로 안전하게 구성 (innerHTML 문자열 깨짐 방지)
+	        var item = document.createElement('div');
+	        item.className = 'attachment-item new-file';
+	        item.setAttribute('data-type', 'new');
+	        item.setAttribute('data-token', tk);
 	
-	        // 기존 파일 삭제
-	        if (fileType === 'existing') {
-	            if (confirm('이 파일을 삭제하시겠습니까?')) {
-	                // 삭제할 파일 ID를 숨겨진 필드에 추가
-	                if (fileId) {
-	                    deletedFileIds.push(fileId);
-	                    deletedFilesField.value = deletedFileIds.join(',');
-	                }
-	                fileItem.remove(); // UI에서 제거
-	            }
-	        // 새로운 파일 삭제
-	        } else if (fileType === 'new') {
-	            fileItem.remove(); // UI에서 제거
-	            // 실제 input 필드에서 파일을 제거하는 로직은 복잡하여 생략.
-	            // 대신, 서버에서 `attachmentsInput.files`를 처리할 때 UI에 없는 파일은 무시하도록 해야 함.
-	        }
-	    });
-	});
+	        var nameSpan = document.createElement('span');
+	        nameSpan.className = 'file-name';
+	        nameSpan.appendChild(document.createTextNode(f.name));
+	
+	        var delBtn = document.createElement('button');
+	        delBtn.type = 'button';
+	        delBtn.className = 'delete-btn';
+	        delBtn.setAttribute('data-type', 'new');
+	        delBtn.title = '삭제';
+	        delBtn.innerHTML = '&times;';
+	
+	        item.appendChild(nameSpan);
+	        item.appendChild(delBtn);
+	        previewContainer.appendChild(item);
+	      }  
+	    // input.files를 관리하는 값으로 교체
+	    // attachmentsInput.files = attachStore.files;
+	    // 같은 파일 또 선택 가능하게 초기화
+	    attachmentsInput.value = '';
+	  });
+	
+	  /** 첨부: 삭제(기존/신규) */
+	  previewContainer.addEventListener('click', function (e) {
+	    var btn = e.target.closest ? e.target.closest('.delete-btn') : null;
+	    if (!btn) return;
+	
+	    var item = btn.closest ? btn.closest('.attachment-item') : null;
+	    if (!item) return;
+	
+	    var type = item.getAttribute('data-type');
+	    if (type === 'existing') {
+	      var id = item.getAttribute('data-file-id');
+	      if (!id) return;
+	      if (!confirm('이 파일을 삭제하시겠습니까?')) return;
+	      if (deletedFileIds.indexOf(id) === -1) {
+	        deletedFileIds.push(id);
+	        deletedField.value = deletedFileIds.join(',');
+	      }
+	      item.parentNode.removeChild(item);
+	    } else if (type === 'new') {
+	      var tk = item.getAttribute('data-token');
+	      if (!tk) return;
+	
+	      // 해당 파일만 제외하고 store 재구성
+	      var rebuilt = new DataTransfer();
+	      for (var i = 0; i < attachStore.files.length; i++) {
+	        var f = attachStore.files[i];
+	        if (tokenOf(f) !== tk) rebuilt.items.add(f);
+	      }
+	      attachStore = rebuilt;
+	      attachmentsInput.files = attachStore.files;
+	      newFileTokens.delete(tk);
+	
+	      item.parentNode.removeChild(item);
+	    }
+	  });
+	 });
     (function(){
         const btn = document.getElementById('createBtn');
         if(!btn) return;
         btn.addEventListener('click', async () => {
           if (!ck) { alert('에디터 초기화 중입니다.'); return; }
-          /* const payload = {
-            boardId: "<c:out value='${boardId}'/>",
-            title: document.getElementById('title').value.trim(),
-            content: ck.getData()
-            //thumbnailId: document.getElementById('thumb').value,           // 썸네일
-      		//attachmentIds: attachmentIds        // 첨부파일
-          }; */
-          const title = document.getElementById('title').value.trim();
-          const thumbInput = document.getElementById('thumb');
-          const attachmentsInput = document.getElementById('attachments');
-          const file = thumbInput.files[0]; // file 변수 선언
-          const files = attachmentsInput.files; // file 변수 선언
-          const notice = document.getElementById('f_active').checked;
+          var title = document.getElementById('title').value.trim();
+          var thumbInp = document.getElementById('thumb');
+          var attach = document.getElementById('attachments');
+          var notice = document.getElementById('f_active').checked;
+          if (!title) { 
+            alert('제목을 입력하세요.'); 
+            return; 
+          }
           const formData = new FormData();
           formData.append('boardId', '<c:out value="${boardId}"/>');
           formData.append('title', title);
           formData.append('content', ck.getData());
           formData.append('notice', notice);
           
-          if (file) { // 파일이 있을 때만 추가
-              formData.append('thumbnail', file);
-            }
-            
-          if (files) {
-        	  for (let i = 0; i < files.length; i ++) {
-	              formData.append('attachments', files[i]);
-        	  }
-          }
-          // FormData 내용 콘솔에 출력
+          if (thumbInp.files[0]) formData.append('thumbnail', thumbInp.files[0]);
+          for (var i = 0; i < attachStore.files.length; i++) {
+        	formData.append('attachments', attachStore.files[i]);
+          }          // FormData 내용 콘솔에 출력
 			for (const [key, value] of formData.entries()) {
 			  console.log(key + ': ', value);     // 안전
 			}
           
-          if (!title) { 
-            alert('제목을 입력하세요.'); 
-            return; 
-          }
+         
           
           try {
             const res = await fetch("<c:url value='/admin/board/createPost.do'/>", {
@@ -300,16 +364,31 @@
         if(!btn) return;
         btn.addEventListener('click', async () => {
           if (!ck) { alert('에디터 초기화 중입니다.'); return; }
-          const payload = {
-            postId: ${isEdit ? post.postId : 0},
-            title: document.getElementById('title').value.trim(),
-            content: ck.getData()
-          };
+
+          var title   = document.getElementById('title').value.trim();
+          var notice  = document.getElementById('f_active').checked;
+          var thumbInp   = document.getElementById('thumb');
+          var deleted = document.getElementById('deletedFileIds').value || '';
+          if (!title) { alert('제목을 입력하세요.'); return; }
+		  
+          var formData = new FormData();
+          formData.append('postId', ${isEdit ? post.postId : 0});
+          formData.append('title', title);
+          formData.append('content', ck.getData());
+          formData.append('notice', notice);
+          var ids = deletedFileIds.filter(function (x) { return x != null && x !== ''; });
+          for (var i = 0; i < ids.length; i++) {
+        	  formData.append('deletedFileIds', ids[i]);   // deletedFileIds=15, deletedFileIds=13, ...
+          }    
+          if (thumbInp.files[0]) formData.append('thumbnail', thumbInp.files[0]);
+          for (var i = 0; i < attachStore.files.length; i++) formData.append('attachments', attachStore.files[i]);
+          for (const [key, value] of formData.entries()) {
+			  console.log(key + ': ', value);     // 안전
+			}
           try {
             const res = await fetch("<c:url value='/admin/board/updatePost.do'/>", {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
+              body: formData // FormData 객체 직접 전달
             });
             const text = await res.text();
             if (!res.ok) throw new Error(text || '수정 실패');
