@@ -17,9 +17,10 @@ public interface boardsMapper {
 	List<Map<String, Object>> findByBoard(
 	        @Param("boardId") String boardId,
 	        @Param("size") int size,
-	        @Param("offset") int offset
+	        @Param("offset") int offset,
+	        @Param("keyword") String keyword
 	    );
-	int countByBoard(String boardId);
+	int countByBoard(@Param("boardId") String boardId,  @Param("keyword") String keyword);
 	PostVO getPostDetail(String postId);
 	Long createPost(PostVO dto);
 	Long updatePost(PostVO dto);

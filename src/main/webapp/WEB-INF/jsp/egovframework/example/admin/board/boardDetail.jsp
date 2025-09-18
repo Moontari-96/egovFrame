@@ -332,9 +332,6 @@
 			for (const [key, value] of formData.entries()) {
 			  console.log(key + ': ', value);     // 안전
 			}
-          
-         
-          
           try {
             const res = await fetch("<c:url value='/admin/board/createPost.do'/>", {
               method: 'POST',

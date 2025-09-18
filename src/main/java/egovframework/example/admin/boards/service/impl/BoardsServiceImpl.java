@@ -40,13 +40,13 @@ public class BoardsServiceImpl extends EgovAbstractServiceImpl implements Boards
 	}
 	
 	@Override
-	public List<Map<String, Object>> findByBoard(String boardId, int size, int offset) {
-		return  boardsDAO.findByBoard(boardId, size, offset);
+	public List<Map<String, Object>> findByBoard(String boardId, int size, int offset, String keyword) {
+		return  boardsDAO.findByBoard(boardId, size, offset, keyword);
 	}
 	
 	@Override
-	public int countByBoard(String boardId) {
-		return  boardsDAO.countByBoard(boardId);
+	public int countByBoard(String boardId, String keyword) {
+		return  boardsDAO.countByBoard(boardId, keyword);
 	}
 	
 	@Override

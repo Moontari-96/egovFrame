@@ -18,6 +18,13 @@
         	p.board_id = #{boardId}
         and 
         	status != 'deleted'
+		<if test="keyword != null and keyword != ''">
+		  and (
+		    p.title like concat('%', #{keyword}, '%')
+		    or 
+		    p.content like concat('%', #{keyword}, '%')
+		  )
+		</if>
         order by 
         	p.created_at desc, p.post_id desc
         limit 
@@ -26,7 +33,7 @@
         	#{offset}
     </select>
 	
-	<select id="countByBoard" parameterType="string" resultType="int">
+	<select id="countByBoard" parameterType="map" resultType="int">
     	select 
 			count(*)
 		from 
@@ -34,7 +41,14 @@
 		where 
 			board_id = #{boardId}
 		and 
-		  	status != 'deleted';
+		  	status != 'deleted'
+		<if test="keyword != null and keyword != ''">
+		  and (
+		    title like concat('%', #{keyword}, '%')
+		    or 
+		    content like concat('%', #{keyword}, '%')
+		  )
+		</if>
 	</select>
 	
 	<select id="getPostDetail" parameterType="string" resultType="PostVO">

@@ -46,15 +46,15 @@ public class BoardsController {
 //		return "sample/home";
 //	}
 	@GetMapping("/{boardId}.do")
-	public String boardListRedirect(@PathVariable String boardId, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
+	public String boardListRedirect(@PathVariable String boardId, @RequestParam(value="q", required=false) String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
 			System.out.println(boardId + "게시물 리스트 진입확인");
 			model.addAttribute("boardId", boardId);
 			
 			try {
 				// 총 개수 + 목록 조회
-				int totalCount = boardsService.countByBoard(boardId);
+				int totalCount = boardsService.countByBoard(boardId, keyword);
 				int offset = (page - 1) * size;
-				List<Map<String, Object>> postList = boardsService.findByBoard(boardId, size, offset);
+				List<Map<String, Object>> postList = boardsService.findByBoard(boardId, size, offset, keyword);
 				
 				// 게시판 이름 (글이 0개일 때도 대비)
 				String boardName = "";

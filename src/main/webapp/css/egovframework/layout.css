@@ -706,3 +706,114 @@ ul.tree-ul>li {
     font-size: 14px;
     margin-right: 8px;
 }
+
+.searchBox{
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: var(--spacing-sm);
+  justify-content: center;
+}
+.searchbar{
+  --sb-h: 44px;
+  --sb-pad: 12px 14px 12px 40px; /* 왼쪽 패딩은 아이콘 공간 */
+  --sb-radius: 12px;
+  --sb-border: 1px;
+  --sb-bg: #fff;
+  --sb-border-color:#dfe3e8;
+  --sb-shadow: 0 1px 2px rgba(0,0,0,.06);
+  --sb-focus:#3b82f6; /* 포커스 파랑 */
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 520px;   /* 필요시 조정 */
+  height: var(--sb-h);
+  padding: 0;
+  margin: 8px 0;
+}
+
+/* 아이콘 */
+.searchbar__icon{
+  position: absolute;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  opacity: .6;
+  pointer-events: none;
+}
+
+/* 인풋 */
+.searchbar__input{
+  flex: 1 1 auto;
+  height: 100%;
+  padding: var(--sb-pad);
+  border: var(--sb-border) solid var(--sb-border-color);
+  border-radius: var(--sb-radius);
+  background: var(--sb-bg);
+  outline: none;
+  box-shadow: var(--sb-shadow);
+  font-size: 14px;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+/* 버튼 */
+.searchbar__btn{
+  flex: 0 0 auto;
+  height: 100%;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: #111827;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .06s ease, opacity .15s ease;
+}
+.reset{
+  height: 100%;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: #111827;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.searchbar__btn:active{ transform: translateY(1px); }
+
+/* 포커스 시 하이라이트 (컨테이너 기준) */
+.searchbar:focus-within .searchbar__input{
+  border-color: var(--sb-focus);
+  box-shadow: 0 0 0 3px rgba(59,130,246,.15);
+}
+
+/* placeholder 색상 */
+.searchbar__input::placeholder{ color:#94a3b8; }
+
+/* 다크 모드 지원 */
+@media (prefers-color-scheme: dark){
+  .searchbar{
+    --sb-bg:#0b1220;
+    --sb-border-color:#2a3550;
+    --sb-shadow: none;
+  }
+  .searchbar__btn{ background:#3b82f6; }
+  .searchbar__input{ color:#e5e7eb; }
+  .searchbar__input::placeholder{ color:#64748b; }
+  .searchbar__icon{ opacity:.75; }
+}
+
+/* 좁은 화면에서 버튼 숨기고 엔터로 검색하고 싶다면 */
+@media (max-width: 420px){
+  .searchbar__btn{ display:none; }
+}

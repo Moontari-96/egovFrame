@@ -58,7 +58,44 @@
             </c:choose>
         </tbody>
     </table>
-
+   <!--  <div class="searchBox">
+		<div class="searchbar">
+			  <span class="searchbar__icon" aria-hidden="true">
+			    돋보기 아이콘 (SVG)
+			    <svg viewBox="0 0 24 24" width="18" height="18">
+			      <path d="M15.5 14h-.79l-.28-.27a6.471 6.471 0 001.57-4.23A6.5 6.5 0 109.5 16.5a6.471 6.471 0 004.23-1.57l.27.28v.79L20 21.49 21.49 20 15.5 14zM9.5 14A4.5 4.5 0 119.5 5a4.5 4.5 0 010 9z"/>
+			    </svg>
+			  </span>
+			  <input
+			    type="text"
+			    name="search"
+			    class="searchbar__input"
+			    placeholder="검색어를 입력하세요"
+			    autocomplete="off"
+			  />
+			  <button class="searchbar__btn" type="submit">검색</button>
+		</div>
+    </div> -->
+    <div class="searchBox">
+	    <c:url var="listAction" value="/admin/board/${boardIdResolved}.do"/>
+		<form class="searchbar" action="${listAction}" method="get" role="search">
+		  <span class="searchbar__icon" aria-hidden="true">
+	  		  <svg viewBox="0 0 24 24" width="18" height="18">
+		     	<path d="M15.5 14h-.79l-.28-.27a6.471 6.471 0 001.57-4.23A6.5 6.5 0 109.5 16.5a6.471 6.471 0 004.23-1.57l.27.28v.79L20 21.49 21.49 20 15.5 14zM9.5 14A4.5 4.5 0 119.5 5a4.5 4.5 0 010 9z"/>
+		      </svg>
+		  </span>
+		  <input
+		    type="text"
+		    name="q"
+		    class="searchbar__input"
+		    placeholder="검색어를 입력하세요"
+		    value="${fn:escapeXml(param.q)}" />
+		  <button class="searchbar__btn" type="submit">검색</button>
+		  <c:if test="${not empty param.q}">
+		    <a class="reset" href="${listAction}">초기화</a>
+		  </c:if>
+		</form>
+	</div>
     <%-- 페이징 네비게이션 --%>
     <div class="pagination">
         <%-- 맨앞 --%>
@@ -67,6 +104,9 @@
                 <a href="<c:url value='/admin/board/${boardIdResolved}.do'>
                            <c:param name='page' value='1'/>
                            <c:param name='size' value='${size}'/>
+                           <c:if test="${not empty param.q}">
+						    <c:param name="q" value="${param.q}"/>
+						  </c:if>
                          </c:url>">« </a>
             </c:when>
             <c:otherwise><span class="disabled">« </span></c:otherwise>
@@ -79,6 +119,9 @@
                 <a href="<c:url value='/admin/board/${boardIdResolved}.do'>
                            <c:param name='page' value='${prevBlockPage}'/>
                            <c:param name='size' value='${size}'/>
+                           <c:if test="${not empty param.q}">
+						    <c:param name="q" value="${param.q}"/>
+						  </c:if>
                          </c:url>">‹ </a>
             </c:when>
             <c:otherwise><span class="disabled">‹ </span></c:otherwise>
@@ -94,6 +137,9 @@
                     <a href="<c:url value='/admin/board/${boardIdResolved}.do'>
                                <c:param name='page' value='${p}'/>
                                <c:param name='size' value='${size}'/>
+                               <c:if test="${not empty param.q}">
+						    <c:param name="q" value="${param.q}"/>
+						  </c:if>
                              </c:url>">${p}</a>
                 </c:otherwise>
             </c:choose>
@@ -106,6 +152,9 @@
                 <a href="<c:url value='/admin/board/${boardIdResolved}.do'>
                            <c:param name='page' value='${nextBlockPage}'/>
                            <c:param name='size' value='${size}'/>
+                           <c:if test="${not empty param.q}">
+						    <c:param name="q" value="${param.q}"/>
+						  </c:if>
                          </c:url>"> ›</a>
             </c:when>
             <c:otherwise><span class="disabled"> ›</span></c:otherwise>
@@ -117,6 +166,9 @@
                 <a href="<c:url value='/admin/board/${boardIdResolved}.do'>
                            <c:param name='page' value='${totalPages}'/>
                            <c:param name='size' value='${size}'/>
+                           <c:if test="${not empty param.q}">
+						    <c:param name="q" value="${param.q}"/>
+						  </c:if>
                          </c:url>"> »</a>
             </c:when>
             <c:otherwise><span class="disabled"> »</span></c:otherwise>
