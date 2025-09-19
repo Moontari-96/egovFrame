@@ -51,6 +51,7 @@ public class AdminMenuController {
             map.put("boardId", menu.getBoardId());
             map.put("menuName", menu.getMenuName());
             map.put("menuUrl", menu.getMenuUrl());
+            map.put("menuCategory", menu.getMenuCategory());
             map.put("menuDepth", menu.getMenuDepth());
             map.put("sortOrder", menu.getSortOrder());
             map.put("isActive", menu.getIsActive());
@@ -81,6 +82,7 @@ public class AdminMenuController {
                 vo.setMenuUrl(  (String) row.get("menuUrl"));
                 vo.setMenuDepth(toLong(row.get("menuDepth")));   // VO 타입에 맞게 Long/Integer
                 vo.setSortOrder(toLong(row.get("sortOrder")));
+                vo.setMenuCategory( (String) row.get("menuCategory"));
                 vo.setIsActive( row.get("isActive") != null && Boolean.parseBoolean(row.get("isActive").toString()));
 
                 if (vo.getMenuId() != null && vo.getMenuId() > 0) {

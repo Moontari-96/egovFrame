@@ -15,7 +15,8 @@ $(function(){
   const url = ctx + "/admin/menu/menu.do";
 
   const eq = (a,b) => String(a) === String(b);
-  const isActive = v => !(v === false || v === 0 || v === '0' || v === 'false' || v === 'N' || v == null);
+  const isActive = v => !(v === false || v === 0 || v === '0' || v == null);
+  const menuCategory = v => (v === "AD");
 
   function normalizeHref(menu) {
     if (menu.menuUrl && menu.menuUrl.trim() !== "") {
@@ -42,6 +43,7 @@ $(function(){
       for (var i=0;i<menuList.length;i++){
         var m = menuList[i];
         if (!isActive(m.isActive)) continue;
+        if (!menuCategory(m.menuCategory)) continue;
         if (eq(m.parentId, pid)) return true;
       }
       return false;
@@ -53,7 +55,7 @@ $(function(){
         var menu = menuList[i];
         if (!isActive(menu.isActive)) continue;
         if (!eq(menu.parentId, parentId)) continue;
-
+        if (!menuCategory(menu.menuCategory)) continue;
         var depth = menu.menuDepth ? Number(menu.menuDepth) : (parentDepth ? parentDepth + 1 : 1);
         var child = hasActiveChild(menu.menuId);
 
@@ -79,6 +81,7 @@ $(function(){
     var out = ['<ul>'];
     for (var i=0;i<menuList.length;i++){
       var m = menuList[i];
+      if (!menuCategory(m.menuCategory)) continue;
       if (!isActive(m.isActive)) continue;
       if (m.parentId == null || String(m.parentId)==="" || String(m.parentId)==="0"){
         var depth = m.menuDepth ? Number(m.menuDepth) : 1;

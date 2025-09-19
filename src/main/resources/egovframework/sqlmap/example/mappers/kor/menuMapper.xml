@@ -14,6 +14,8 @@
     	menu
     where
     	is_active = 1
+    and
+    	menu_category = 'KO'
    	order by 
    		menu_depth asc,
         coalesce(parent_id,0) asc,

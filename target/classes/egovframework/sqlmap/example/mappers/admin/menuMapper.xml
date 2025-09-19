@@ -37,7 +37,8 @@
 			menu_url = #{menuUrl},
 			menu_depth = #{menuDepth},
 			sort_order = #{sortOrder},
-			is_active = #{isActive}
+			is_active = #{isActive},
+			menu_category = #{menuCategory}
 		where 
 			menu_id = #{menuId}
 	</update>

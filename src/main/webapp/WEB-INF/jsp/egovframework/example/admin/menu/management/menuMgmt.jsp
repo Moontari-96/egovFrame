@@ -48,6 +48,14 @@
           <div class="field"><label>정렬순서 (sortOrder)</label><input id="f_sort" type="number" value="0" min="0" step="1" inputmode="numeric" pattern="\d*"></div>
           <div class="field" style="grid-column:1/3"><label>메뉴명</label><input id="f_name" type="text"></div>
           <div class="field" style="grid-column:1/3"><label>URL</label><input id="f_url" type="text" placeholder="/path"></div>
+          <div class="field" style="grid-column:1/3">
+          <label for="f_category">카테고리</label>
+			<select id="f_category" name="menuCategory" class="select-field" required>
+			  <option value="">선택</option>
+			  <option value="KO">KO</option>
+			  <option value="AD">AD</option>
+			</select>
+          </div>
           <div class="field"><label>사용여부</label>
             <label class="switch"><input id="f_active" type="checkbox"><span class="slider"></span></label>
           </div>
@@ -117,6 +125,7 @@ function sanitizeMenu(list) {
     const name      = m.menuName ?? m.name ?? m.menu_name ?? m.title;
     const url       = m.menuUrl ?? m.url ?? m.path;
     const depth     = m.menuDepth ?? m.depth ?? m.menu_depth;
+    const category  = m.menuCategory ?? m.category ?? m.menu_category;
     const sort      = m.sortOrder ?? m.sort ?? m.sort_order ?? m.ord;
     const active    = (m.isActive ?? m.active ?? m.useYn ?? m.enabled);
 
@@ -126,6 +135,7 @@ function sanitizeMenu(list) {
       boardId  : toNum(board, 0),
       menuName : (name ?? '').toString(),
       menuUrl  : (url  ?? '').toString(),
+      menuCategory: (category  ?? '').toString(),
       menuDepth: toNum(depth, 1),
       sortOrder: toNum(sort, 0),
       isActive : !!(String(active) === 'true' || String(active) === 'Y' || active === true)
@@ -329,12 +339,14 @@ function selectNode(id){
 
 	  const m = MENU.find(x => x.menuId === id);
 	  if(!m) return;
+	  console.log(m.menuCategory)
 
 	  byId('f_parentId').value = m.parentId || null;
 	  byId('f_depth').value    = m.menuDepth || 1;
 	  byId('f_board').value     = m.boardId || null;
 	  byId('f_sort').value     = m.sortOrder || 0;
 	  byId('f_name').value     = m.menuName  || '';
+	  byId('f_category').value = m.menuCategory || '';
 	  byId('f_url').value      = m.menuUrl   || '';
 	  byId('f_active').checked = !!m.isActive;
 
@@ -354,6 +366,7 @@ function addAuto(){
     menuName: '새 메뉴',
     menuUrl:  '',
     sortOrder: '',
+    menuCategory: 'AD',
     menuDepth: canBeChild ? (parent.menuDepth||1)+1 : 1,
     isActive: true
   };
@@ -452,6 +465,7 @@ function saveCurrent(){
   m.menuUrl  = byId('f_url').value.trim();
   m.sortOrder = Number(byId('f_sort').value||0);
   m.isActive = byId('f_active').checked;
+  m.menuCategory = byId('f_category').value.trim();
   const boardRaw = byId('f_board').value?.trim();
   m.boardId = boardRaw === '' ? null : Number(boardRaw);
 

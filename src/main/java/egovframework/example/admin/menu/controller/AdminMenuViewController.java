@@ -47,6 +47,7 @@ public class AdminMenuViewController {
             o.put("parentId", m.getParentId() == null ? 0 : m.getParentId());
             o.put("boardId", m.getBoardId() == null ? 0 : m.getBoardId());
             o.put("menuName", m.getMenuName());
+            o.put("menuCategory", m.getMenuCategory());
             o.put("menuUrl", m.getMenuUrl());
             o.put("menuDepth", m.getMenuDepth() == null ? 1 : m.getMenuDepth());
             o.put("sortOrder", m.getSortOrder() == null ? 0 : m.getSortOrder());

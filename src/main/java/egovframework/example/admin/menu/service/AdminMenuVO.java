@@ -13,6 +13,7 @@ public class AdminMenuVO {
     private Long boardId; // 게시판 ID
     private String menuName;
     private String menuUrl;
+    private String menuCategory;
     private Long menuDepth; 
     private Long sortOrder; 
     private Boolean isActive; 
