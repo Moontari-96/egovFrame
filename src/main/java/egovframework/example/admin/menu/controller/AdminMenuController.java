@@ -61,7 +61,6 @@ public class AdminMenuController {
 
         return result;
     }
-    
     @PostMapping(value = "/saveMenu.do", produces = "application/json")
     public ResponseEntity<Map<String, Object>> saveMenu(
             @RequestBody Map<String, List<Map<String, Object>>> payload) {

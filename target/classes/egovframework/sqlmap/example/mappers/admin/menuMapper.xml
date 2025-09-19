@@ -10,6 +10,16 @@
         order by 
         	parent_id, menu_id
 	</select>
+	<select id="selectActiveMenuList" resultType="AdminMenuVO">
+	   	select 
+            *
+        from 
+        	menu
+        where
+        	is_active = 1
+        order by 
+        	parent_id, menu_id
+	</select>
 	
 	<insert id="saveMenu" parameterType="AdminMenuVO">
 		insert
